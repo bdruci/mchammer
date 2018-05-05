@@ -123,7 +123,7 @@ int Utility::linearizeIndices( std::vector<int> indices , std::vector<int> binSi
  * ****************************************************************************************************** */ 
 
 // L2 norm of two points
-double pointL2( point a , point b ) {
+double Utility::pointL2( point a , point b ) {
   return( (a - b)*(a - b) );
 }
 

@@ -29,6 +29,11 @@ typedef std::shared_ptr<Particle>                          Part_ptr;
 typedef std::shared_ptr<ParticleAttributeBinningStructure> Bin_ptr;
 
 class EstimatorCollection {
+  private:
+    //TODO implement XS input on construction for additional reaction rate multipliers
+    //TODO have a volume multiplier passed in at construction (based on a precaculated cell/tet volume)
+    //  - divide the estimator by volume at the end of the caculation
+    //  - for surface tallies, volume is area?
 
   protected:
     int                            size;

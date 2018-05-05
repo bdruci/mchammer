@@ -151,7 +151,7 @@ namespace Utility {
     }
   }
   
-  // L2 norm of two points
+  // L2 distance between two points
   double pointL2( point a , point b );
 
 /* ****************************************************************************************************** * 

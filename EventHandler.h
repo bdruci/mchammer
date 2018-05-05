@@ -16,10 +16,12 @@
 #include <vector>
 #include <memory> 
 
+#include "Utility.h"
 #include "Cell.h"
 #include "Mesh.h"
 #include "Surface.h"
 #include "Particle.h"
+#include "Geometry.h"
 #include "EstimatorCollection.h"
 
 using std::vector;
@@ -31,27 +33,29 @@ typedef std::shared_ptr< surface             >  Surf_ptr;
 typedef std::shared_ptr< Nuclide             >  Nuclide_ptr;
 typedef std::shared_ptr< Reaction            >  Reaction_ptr;
 typedef std::shared_ptr< Particle            >  Part_ptr;
-typedef std::shared_ptr< Point               >  Point_ptr;
-typedef std::shared_ptr< Tet                 > Tet_ptr;
+typedef std::shared_ptr< point               >  Point_ptr;
+typedef std::shared_ptr< Tet                 >  Tet_ptr;
 typedef std::shared_ptr< EstimatorCollection >  EstCol_ptr;
 
 
 class EventHandler {
+// abstract base class for EventHandler
 
-  protected:
-    // enumeration binding tally type to integers
-    static const enum
-  
   public:
     EventHandler() {};
    ~EventHandler() {};
 
-    double getMultiplier( int EstimatorType ) = 0; 
-    void   score(Point_ptr p0 , Part_ptr particle)  = 0;
+    virtual double getMultiplier( EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle) = 0; 
+    virtual void   score(Point_ptr p0 , Part_ptr particle)  = 0;
 
 };
 
 class CollisionHandler : public EventHandler {
+// following a collision, the client must set the currentCell and currentTet as the cell and tet the collision occured in
+// then the client can call score
+// CollisionHandler will search Geometry, currentCell, and currentTet for any EstimatorCollections
+// CollisionHandler will determine the necessary multipliers for each EstimatorCollection, and score them appropriately
+
   private:
     Cell_ptr currentCell;
     Tet_ptr  currentTet;
@@ -60,13 +64,21 @@ class CollisionHandler : public EventHandler {
     CollisionHandler() {};
    ~CollisionHandler() {};
 
-   void setCurrentCell( Cell_ptr cell );
-   void setCurrentTet( Tet_ptr tet );
+    void setCurrentCell( Cell_ptr cell ) { currentCell = cell; };
+    void setCurrentTet(  Tet_ptr  tet  ) { currentTet  = tet;  };
+    
+    double getMultiplier( EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle);
+    void   score(Point_ptr p0 , Part_ptr particle);
 
 };
 
 
 class SurfaceCrossingHandler : public EventHandler {
+// following a surface corssing, the client must set the surfaceCrossed and cellLeft
+// then the client can call score
+// SurfaceCrossingHandler will search Geometry, surfaceCrossed, and cellLeft for any EstimatorCollections
+// SurfaceCrossingHandler will determine the necessary multipliers for each EstimatorCollection, and score them appropriately
+
   private:
     Surf_ptr surfaceCrossed;
     Cell_ptr cellLeft;
@@ -75,9 +87,13 @@ class SurfaceCrossingHandler : public EventHandler {
     SurfaceCrossingHandler() {};
    ~SurfaceCrossingHandler() {};
 
-    void setSurfaceCrossed( Surf_ptr surf );
-    void setCellLeft( Cell_ptr cell );
+    void setSurfaceCrossed( Surf_ptr surf )  { surfaceCrossed = surf; };
+    void setCellLeft(       Cell_ptr cell )  { cellLeft       = cell; };
+
+    double getMultiplier( EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle);
+    void   score(Point_ptr p0 , Part_ptr particle);
 
 };
 
 #endif
+
