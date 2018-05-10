@@ -41,10 +41,10 @@ void EstimatorCollection::endHist() {
 int EstimatorCollection::getLinearIndex(Part_ptr p ) {
   vector<int> indices;
   for(auto const& attribute : attributes) {
-    std::pair<int , bool> index = attribute.second->getIndex(p);
-    if(index.second == true) {
+    int index = attribute.second->getIndex(p);
+    if(index >= 0) {
       // if the particle attribute is within the binning range, append the index to the n-dimensional indices
-      indices.push_back( index.first );
+      indices.push_back( index );
     }
     else { 
       // if one of the particle attributes is outisde the binning range, return -1 from the function 
