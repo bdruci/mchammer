@@ -108,8 +108,12 @@ void Tet::setVertices(std::shared_ptr<point> p1, std::shared_ptr<point> p2,
 	A4.push_back(A42);
 	A4.push_back(A43);
 	A4.push_back(A44);
-	
-	
+    
+    vector< double > diff1 = {xyz1[0] - xyz4[0], xyz1[1] - xyz4[1], xyz1[2] - xyz4[2]}; 
+    vector< double > diff2 = {xyz2[0] - xyz4[0], xyz2[1] - xyz4[1], xyz2[2] - xyz4[2]};    
+    vector< double > diff3 = {xyz3[0] - xyz4[0], xyz3[1] - xyz4[1], xyz3[2] - xyz4[2]};    
+    volume = 1.0/6.0*threeDeterminant(diff1, diff2, diff3);
+
     if (d0 == 0.0)
     {
         std::cout << "ERROR: The verticies for tet " << Tet::getID() << "are co-planar." << std::endl;

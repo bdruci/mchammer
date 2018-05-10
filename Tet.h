@@ -36,7 +36,8 @@ private:
     vector< double > vert2;
     vector< double > vert3;
     vector< double > vert4;
-	vector< double > A1, A2, A3, A4;; //3x3 determinants precomp
+    vector< double > A1, A2, A3, A4;; //3x3 determinants precomp
+    double volume; 
 
     // Estimators
     vector< Estimator_ptr > estimators;

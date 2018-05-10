@@ -32,11 +32,14 @@ public:
 
 class setSourceSphere : public Source {
 private: 
-   double x0,y0,z0, radInner, radOuter;
+   double x0,y0,z0, radInner, radOuter, radInnerCubed, radOuterCubed;
    std::vector <double> groupProbability;
 public:
    setSourceSphere(std::string label, double xSource, double ySource, double zSource, double radInner, double radOuter, std::vector<double> groupProbSet )
-   : Source(label), x0(xSource), y0(ySource), z0(zSource), radInner(radInner), radOuter(radOuter), groupProbability(groupProbSet) {};
+   : Source(label), x0(xSource), y0(ySource), z0(zSource), radInner(radInner), radOuter(radOuter), groupProbability(groupProbSet) {
+      radInnerCubed = radInner * radInner * radInner;
+      radOuterCubed = radOuter * radOuter * radOuter;
+      };
    ~setSourceSphere() {};
    Particle sample();
 };

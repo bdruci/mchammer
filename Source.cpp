@@ -47,35 +47,35 @@ Particle setSourcePoint::sample(){
 Particle setSourceSphere::sample(){
 	double pi = acos(-1.);
 	//Radius of the new particle
-	//double radius = pow((pow(radInner,3.0) + Urand()*(pow(radOuter,3.0)-pow(radInner,3.0))),(1. / 3.));
-	//double mu = 2.0 * Urand() - 1.0;
-	//double phi = 2.0 * pi*Urand();
+	double radius = cbrt(radInnerCubed + Urand()*(radOuterCubed-radInnerCubed));
+	double mu = 2.0 * Urand() - 1.0;
+	double phi = 2.0 * pi*Urand();
 
-	//double x=radius*sqrt(1-pow(mu,2.))*cos(phi)+x0;
-	//double y=radius*sqrt(1-pow(mu,2.))*sin(phi)+y0;
-	//double z=radius*mu+z0;
+	double x=radius*sqrt(1-pow(mu,2.))*cos(phi)+x0;
+	double y=radius*sqrt(1-pow(mu,2.))*sin(phi)+y0;
+	double z=radius*mu+z0;
 	//std::cout << "mu: " << mu << " x: " << x << " y: " << y << " z: " << z << std::endl;
 	//std::cout << std::endl;
-	double x;
-	double y;
-	double z;
-	bool reject = true;
-	while(reject)
-	{
-		x = 2*Urand()*radOuter;
-		y = 2*Urand()*radOuter;
-		z = 2*Urand()*radOuter;
-		double dist = sqrt(x*x+y*y+z*z);
-		if(dist < radOuter)
-			reject = false;
-	}
+	//double x;
+	//double y;
+	//double z;
+	//bool reject = true;
+	//while(reject)
+	//{
+	//	x = 2*Urand()*radOuter;
+	//	y = 2*Urand()*radOuter;
+	//	z = 2*Urand()*radOuter;
+	//	double dist = sqrt(x*x+y*y+z*z);
+	//	if(dist < radOuter)
+	//		reject = false;
+	//}
 	auto group = groupSample(groupProbability);
 	
 	point pos = point(x,y,z);
 
         // direction sampling	
-	double mu = 2 * Urand() - 1;
-	double phi = 2 * pi*Urand();
+	//double mu = 2 * Urand() - 1;
+	//double phi = 2 * pi*Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
 	double omegaZ=sin(acos(mu))*sin(phi);
