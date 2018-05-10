@@ -30,6 +30,7 @@ template <typename attributeType> class BinningStructure {
     // constructor for structure with specified number of bins
     BinningStructure(attributeType minin , attributeType maxin , int sizein , bool strictin): 
       min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size )) ) , strict(strictin)  {};
+    
     // constructor for structure with implicit bins edges at integer values between min and max
     BinningStructure(attributeType minin , attributeType maxin ,  bool strictin): 
       min(minin) , max(maxin) , size(max - min) , binWidth(1) , strict(strictin)  {};
