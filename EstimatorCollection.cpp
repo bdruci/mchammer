@@ -13,6 +13,9 @@
 EstimatorCollection::EstimatorCollection(std::map< string , Bin_ptr > attributesin , EstimatorType t): 
                                           attributes(attributesin) , type(t) 
 {
+// set default geometric divisor to 1
+geometricDivisor = 1;
+
 // default constructor calculates number of estimators required
   size = 1;
   for (const auto &vals : attributes) {
@@ -57,6 +60,34 @@ void EstimatorCollection::score(Part_ptr p  , double multiplier) {
     // if the particle attributes are within the binning range
     // score the particle at the correct index
     estimators.at(i)->score( multiplier * p->getWeight() );
+  }
+}
+
+void EstimatorCollection::setGeometricDivisor(double div) {
+  switch(type) {
+    case EstimatorType::SurfaceCurrent:
+      // there is no geometric divisor for surface current - it is literally a count of the number of particles 
+      // that cross a surface. This should throw a runtime error.
+      std::cerr << "Error in EstimatorCollection::setGeometricDivisor"  << std::endl;
+      std::cerr << "SurfaceCurrent estimators don't have geometric multipliers" << std::endl;
+      throw;
+      break;
+    case EstimatorType::SurfaceFluence:
+      // the geometric divisor for a surface fluence estimator is the area being tallied over
+      geometricDivisor = div;
+      break;
+    case EstimatorType::TrackLength:
+      // the geometric divisor for a track length estimator is the volume being tallied over
+      geometricDivisor = div;
+      break;
+    case EstimatorType::Collision:
+      // the geometric divisor for a collision estimator is the volume being tallied over
+      geometricDivisor = div;
+      break;
+    default: 
+      std::cerr << "Error in EstimatorCollection::setGeometricDivisor"  << std::endl;
+      std::cerr << "Unknown EstimatorType" << std::endl;
+      throw;
   }
 }
 

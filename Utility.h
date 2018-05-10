@@ -1,6 +1,7 @@
 #ifndef __UTILITY_H__
 #define __UTILITY_H__
 
+#include <math.h>
 #include <vector>
 #include <cmath>
 #include <cassert>
@@ -39,26 +40,32 @@ namespace Utility {
 
   template <typename attributeType> class BinningStructure {
     private:
-      int size;
+      int  size;
+      bool strict;
       attributeType min , max , binWidth;
     public:
-      BinningStructure(attributeType minin , attributeType maxin , int sizein): min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size )) )  {};
+      BinningStructure(attributeType minin , attributeType maxin , int sizein , bool strictin): 
+        min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size )) ) , strict(strictin)  {};
      ~BinningStructure() {};
 
       int getSize() { return(size); };
       
-      std::pair<int , bool> getIndex(attributeType value)
+      int getIndex(attributeType value)
       {
-        std::pair <int , bool> out;
+        int index;
         if (value <= max and value >= min) {
-          out.first  = static_cast<int>(value / binWidth);
-          out.second = true;
+          return(static_cast<int>(  floor(value - min) / binWidth));
         }
-        else{
-          out.first  = 0;
-          out.second = false; 
+        else if (strict == false) {
+          // if not strict, an index of -1 tells the client the value is outside the binning structure
+          return(-1);
         }
-        return(out);
+        else {
+          // throw an error
+          std::cerr << "Error un Utility::BinningStructure::getIndex" << std::endl;
+          std::cerr << "When BinningStructure::strict is true, a value outisde the binning structure results in a runtime error" << std::endl;
+          throw;
+        }
       };
 
   };

@@ -407,10 +407,9 @@ void Input::readInput( std::string xmlFilename ) {
 
       
     if ( type == "CollisionTally" ) {
-      // make sure all attributes in the attribute map are consistent with a CollisionTally
-      // by creating a dummy collision tally and doing an attribute check
-      //CollisionEstimatorCollection col(attributeMap);
-      //col.checkAttributeNames();
+      // create estimator collection
+      // TODO set up geometric multipliers so the volume of a cell/group of cells/tet can be passed to the estimator collection
+      EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::Collision);
 
       if ( apply == "cell" ) {
         // special case "all_cells"
@@ -418,7 +417,6 @@ void Input::readInput( std::string xmlFilename ) {
           for ( auto cel : geometry->getCells() ) {
             // make a CollisionEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
             // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence);
             cel->addEstimator(est);
           }
         }
@@ -428,7 +426,6 @@ void Input::readInput( std::string xmlFilename ) {
           if ( cel ) {
             // make a CollisionEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
             // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence );
             cel->addEstimator(est);
           }
           else {
@@ -447,7 +444,6 @@ void Input::readInput( std::string xmlFilename ) {
           for ( auto t : mesh->getTets() ) {
             // make a CollisionEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
             // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence );
             t->addEstimator(est);
           }
         }
@@ -457,7 +453,6 @@ void Input::readInput( std::string xmlFilename ) {
           if ( tet ) {
             // make a CollisionEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
             // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::Collision );
             tet->addEstimator(est);
           }
           else {
@@ -472,18 +467,12 @@ void Input::readInput( std::string xmlFilename ) {
       }
     }
     else if ( type == "SurfaceFluenceTally" ) {
-      // make sure all attributes in the attribute map are consistent with a SurfaceTally
-      // by creating a dummy surface tally and doing an attribute check
-      //SurfaceFluenceEstimatorCollection surf(attributeMap);
-      //surf.checkAttributeNames();
+      EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence);
 
       if ( apply == "surface" ) {
         // special case "all_cells"
         if ( applyName == "all_surfaces" ) {
           for ( auto surf : geometry->getSurfaces() ) {
-            // make a SurfaceEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
-            // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence);
             surf->addEstimator(est);
           }
         }
@@ -491,9 +480,6 @@ void Input::readInput( std::string xmlFilename ) {
           std::shared_ptr< surface > surf = findByName( geometry->getSurfaces() , applyName );
 
           if ( surf ) {
-            // make a SurfaceEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
-            // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence );
             surf->addEstimator(est);
           }
           else {
@@ -508,18 +494,12 @@ void Input::readInput( std::string xmlFilename ) {
       }
     }
     else if ( type == "SurfaceCurrentTally" ) {
-      // make sure all attributes in the attribute map are consistent with a SurfaceTally
-      // by creating a dummy surface tally and doing an attribute check
-      // SurfaceCurrentEstimatorCollection surf(attributeMap);
-      // surf.checkAttributeNames();
+      EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceCurrent );
 
       if ( apply == "surface" ) {
-        // special case "all_cells"
+        // special case "all_surfaces"
         if ( applyName == "all_surfaces" ) {
           for ( auto surf : geometry->getSurfaces() ) {
-            // make a SurfaceEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
-            // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceCurrent );
             surf->addEstimator(est);
           }
         }
@@ -527,9 +507,6 @@ void Input::readInput( std::string xmlFilename ) {
           std::shared_ptr< surface > surf = findByName( geometry->getSurfaces() , applyName );
 
           if ( surf ) {
-            // make a SurfaceEstimatorCollection shared ptr and cast it as an EstimatorCollection shared ptr 
-            // use the attributeMap for this estimator as the constructor
-            EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceCurrent );
             surf->addEstimator(est);
           }
           else {

@@ -31,12 +31,9 @@ typedef std::shared_ptr<ParticleAttributeBinningStructure> Bin_ptr;
 class EstimatorCollection {
   private:
     //TODO implement XS input on construction for additional reaction rate multipliers
-    //TODO have a volume multiplier passed in at construction (based on a precaculated cell/tet volume)
-    //  - divide the estimator by volume at the end of the caculation
-    //  - for surface tallies, volume is area?
-
-  protected:
-    int                            size;
+    
+    double geometricDivisor;
+    int    size;
     vector <int>                   binSizes;
     std::map < string , Bin_ptr >  attributes;
     vector   < Estimator_ptr    >  estimators;
@@ -69,6 +66,10 @@ class EstimatorCollection {
 
     // score a tally in the correct bin, with a given multiplier
     void score(Part_ptr p, double multiplier);
+
+    // set the geometric divisor to normalize estimators
+    // Implementation depends on type
+    void setGeometricDivisor(double div);
 
     void endHist();
     

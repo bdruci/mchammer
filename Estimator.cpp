@@ -26,7 +26,7 @@ std::pair < double , double > Estimator::getScalarEstimator(unsigned long long n
     std::pair < double , double >  estimate;
     if (nHist > 1) {
         // find the standard deviation of the estimator
-        double stdDev = sqrt( ( 1.0 / (nHist-1) ) * ( histTallySqr  - ( 1.0 / nHist ) * pow( histTally , 2 )  ) ); 
+        double stdDev = sqrt( ( 1.0 / (nHist) ) * ( histTallySqr  - ( 1.0 / nHist ) * pow( histTally , 2 )  ) ); 
         estimate.first  = histTally / nHist;
         estimate.second = stdDev;
     }

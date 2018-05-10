@@ -38,6 +38,19 @@ double CollisionHandler::getMultiplier(EstimatorCollection::EstimatorType type ,
 }
 
 void CollisionHandler::score(Point_ptr p0 , Part_ptr particle) {
+  double multiplier;
+  for( auto est : currentCell->getEstimators() ) {
+    // score all estimators that belong to the cell the particle has collided in
+    // these can be collision or track length estimators
+    multiplier = getMultiplier( est->getType() , p0 , particle);
+    est->score(particle , multiplier);
+  }
+  for( auto est : currentTet->getEstimators() ) {
+    // score all estimators that belong to the unstructured mesh element that the particle has collided in
+    // this can only be a collision estimator
+    multiplier = getMultiplier( est->getType() , p0 , particle);
+    est->score(particle , multiplier);
+  }
 
 }
 
@@ -72,5 +85,17 @@ double SurfaceCrossingHandler::getMultiplier(EstimatorCollection::EstimatorType 
 }
 
 void SurfaceCrossingHandler::score(Point_ptr p0 , Part_ptr particle) {
-
+  double multiplier;
+  for( auto est : surfaceCrossed->getEstimators() ) {
+    // score all estimators that belong the surface the particle has crossed
+    // these can only be surface current of surface fluence estimators
+    multiplier = getMultiplier( est->getType() , p0 , particle);
+    est->score(particle , multiplier);
+  }
+  for( auto est : cellLeft->getEstimators() ) {
+    // score all estimators that belong to the cell the particle has just left
+    // these can only be track length estimators
+    multiplier = getMultiplier( est->getType() , p0 , particle);
+    est->score(particle , multiplier);
+  }
 }
