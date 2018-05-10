@@ -152,7 +152,6 @@ point  cylinder::getNormal( point p ) {
     // the gradient vector of the cylinder, general for all orientations
     point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
     
-    //return normal;
     //Fix for the axis centered cylinders
     if(dir.x != 0){
       normal.x = 0;
