@@ -63,5 +63,20 @@ public:
     double distance( point p, point u );
 };
 
+//Currently only takes cylinders along a x/y/z axis
+class cylinder : public surface {
+private:
+    double x0, y0, z0, rad;
+    point dir;
+public:
+    cylinder( std::string label, double x_in, double y_in, double z_in, double rad_in, point dir_in)
+            : surface(label), x0(x_in), y0(y_in), z0(z_in), rad(rad_in), dir(dir_in) { };
+    ~cylinder() {};
+
+    point  getNormal(point p);
+    double eval( point p );
+    double distance( point p, point u );
+};
+
 
 #endif
