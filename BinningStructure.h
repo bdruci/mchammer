@@ -41,13 +41,16 @@ template <typename attributeType> class BinningStructure {
 
   public:
     // constructor for structure with specified number of bins
+    // max is the largest upper bin edge
+    // min is the smallest upper bin edge
+    // size is the number of bins in the structure (there will be size + 1 bin edges, including the ones at min and max)
     BinningStructure(attributeType minin , attributeType maxin , int sizein , bool strictin): 
-      min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size )) ) , strict(strictin)  
+      min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size ) ) ) , strict(strictin)  
     { 
       // generic (not type dependent) check for binning structure validity
-      if (max <= min ) {
+      if (max < min ) {
         std::cerr << "Error in BinningStructure::BinningStructure!" << std::endl;
-        std::cerr << "Max must be less than min " << std::endl;
+        std::cerr << "Max must be greater than min " << std::endl;
         throw;
       }
       
@@ -57,13 +60,19 @@ template <typename attributeType> class BinningStructure {
    ~BinningStructure() {};
 
     int getSize() { return(size); };
+
+    attributeType getBinWidth() { return(binWidth); };
+    attributeType getMin()      { return(min);      };
+    attributeType getMax()      { return(max);      };
     
     // given a value, finds the index in the binning structure 
+    // the index of the first bin is 0, e.g. the bin from [min,min+binWidth)
+    // the index of the last bin is -1, e.g. the bin from [max - binWidth,max)
     int getIndex(attributeType value) 
     {
       int index;
-      if (value <= max and value >= min) {
-        return( (int)   floor( size * (value - min) / (max - min) ) );
+      if (value < max and value >= min) {
+        return( (int)   floor( size  * (value - min) / (max - min) ) );
       }
       else if (strict == false) {
         // if not strict, an index of -1 tells the client the value is outside the binning structure
@@ -78,10 +87,7 @@ template <typename attributeType> class BinningStructure {
     };
 };
 
-
 // validity check for integer binning structures
 template<> void BinningStructure<int>::checkValidity();
-
-
 
 #endif

@@ -33,10 +33,18 @@ TEST_CASE( "BinningStructure with doubles, non-strict indexing", "[Utility]" ) {
 
 TEST_CASE( "BinningStructure with doubles, negative values, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< double > bin( -7 , 7 , 140 , false);
+    BinningStructure< double > bin( -7 , 7 , 150 , false);
 
     SECTION ( " test getSize" ) {
-      REQUIRE(  bin.getSize() == 140 );
+      REQUIRE(  bin.getSize() == 150 );
+    }
+    
+    SECTION( "test getIndex with in range negative value" ) {
+      REQUIRE( bin.getIndex(-7) == 0 );
+    }
+    
+    SECTION( "test getIndex with in range positive value" ) {
+      REQUIRE( bin.getIndex(7) == -1 );
     }
   
     SECTION( "test getIndex with in range negative value" ) {
@@ -47,15 +55,19 @@ TEST_CASE( "BinningStructure with doubles, negative values, non-strict indexing"
       REQUIRE( bin.getIndex(-7.01) == -1 );
     }
     
+    SECTION( "test getIndex with value testing bin boundary fidelity") {
+      REQUIRE( bin.getIndex(-0.001) == 74);
+    }
+    
     SECTION( "test getIndex with in range 0") {
-      REQUIRE( bin.getIndex(0) == 70);
+      REQUIRE( bin.getIndex(0) == 75);
     }
   
 }
 
 TEST_CASE( "BinningStructure with int, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< int > bin(12 , 24 , 6 , false);
+    BinningStructure< int > bin(12 , 23 , 6 , false);
 
     SECTION( "test getIndex with in range value" ) {
       REQUIRE( bin.getIndex(14) == 1 );
@@ -69,7 +81,7 @@ TEST_CASE( "BinningStructure with int, non-strict indexing", "[Utility]" ) {
 
 TEST_CASE( "BinningStructure with int, max size, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< int > bin(12 , 24 , 12 , false);
+    BinningStructure< int > bin(12 , 23 , 12 , false);
 
     SECTION( "test getIndex with in range value" ) {
       REQUIRE( bin.getIndex(14) == 2 );
@@ -83,7 +95,7 @@ TEST_CASE( "BinningStructure with int, max size, non-strict indexing", "[Utility
 
 TEST_CASE( "BinningStructure with int, negative values, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< int > bin(-3 , 3 , 6 , false);
+    BinningStructure< int > bin(-3 , 3 , 7 , false);
 
     SECTION( "test getIndex with in range negative value" ) {
       REQUIRE( bin.getIndex(-2) == 1 );

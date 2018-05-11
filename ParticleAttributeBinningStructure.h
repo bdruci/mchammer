@@ -44,13 +44,13 @@ class GroupBinningStructure : public ParticleAttributeBinningStructure {
   public:
     // default constructor - all groups
     GroupBinningStructure(int numGroups): ParticleAttributeBinningStructure(numGroups) , 
-                                          binning(0 , numGroups - 1 , numGroups , false) {};
+                                          binning(1 , numGroups + 1 , numGroups + 1 , false) {};
     // constructor  - single group
     GroupBinningStructure(int numGroups , int group): ParticleAttributeBinningStructure(1) , 
-                                                      binning(group , group , 1 , false) {};
+                                                      binning(group , group + 1 , 1 , false) {};
     // constructor  - range of groups
     GroupBinningStructure(int numGroups , int min , int max): ParticleAttributeBinningStructure(1 + max - min) , 
-                                                              binning(min , max , 1 + max - min , false) {};
+                                                              binning(min , max + 1, 1 + max - min , false) {};
    ~GroupBinningStructure() {};
     
     int getIndex( Part_ptr p );
