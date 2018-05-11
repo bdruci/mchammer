@@ -1,0 +1,16 @@
+#include "BinningStructure.h"
+
+template<> void BinningStructure<int>::checkValidity()
+{
+  if ( size > (max - min) ) {
+    std::cerr << "Error un Utility::BinningStructure::checkValidity" << std::endl;
+    std::cerr << "For integer binning structures, the size must be less than max - min" << std::endl;
+    throw;
+  }
+  else if ( (max - min) % size != 0) {
+    std::cerr << "Error un Utility::BinningStructure::checkValidity" << std::endl;
+    std::cerr << "For integer binning structures, the size must be divisable by max - min" << std::endl;
+    throw;
+  }
+};
+
