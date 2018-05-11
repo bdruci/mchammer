@@ -17,6 +17,14 @@
  *
  ******************************************************************************/
 
+
+#include <math.h>
+#include <vector>
+#include <cmath>
+#include <cassert>
+#include <iostream>
+#include <limits>
+
 #ifndef _BINNINGSTRUCTURE_H_
 #define _BINNINGSTRUCTURE_H_
 
@@ -26,19 +34,32 @@ template <typename attributeType> class BinningStructure {
     int  size;
     bool strict;
     attributeType min , max , binWidth;
+
+    // specialized method for checking validity of input parameters
+    // throws if input parameters are invalid for attributeType
+    void checkValidity() {}
+
   public:
     // constructor for structure with specified number of bins
     BinningStructure(attributeType minin , attributeType maxin , int sizein , bool strictin): 
-      min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size )) ) , strict(strictin)  {};
+      min(minin) , max(maxin) , size(sizein) , binWidth( (max - min) / (static_cast<attributeType>( size )) ) , strict(strictin)  
+    { 
+      // generic (not type dependent) check for binning structure validity
+      if (max <= min ) {
+        std::cerr << "Error in BinningStructure::BinningStructure!" << std::endl;
+        std::cerr << "Max must be less than min " << std::endl;
+        throw;
+      }
+      
+      checkValidity();
+    };
     
-    // constructor for structure with implicit bins edges at integer values between min and max
-    BinningStructure(attributeType minin , attributeType maxin ,  bool strictin): 
-      min(minin) , max(maxin) , size(max - min) , binWidth(1) , strict(strictin)  {};
    ~BinningStructure() {};
 
     int getSize() { return(size); };
     
-    int getIndex(attributeType value)
+    // given a value, finds the index in the binning structure 
+    int getIndex(attributeType value) 
     {
       int index;
       if (value <= max and value >= min) {
@@ -49,13 +70,18 @@ template <typename attributeType> class BinningStructure {
         return(-1);
       }
       else {
-        // throw an error
+        // if strict, throw an error
         std::cerr << "Error un Utility::BinningStructure::getIndex" << std::endl;
         std::cerr << "When BinningStructure::strict is true, a value outisde the binning structure results in a runtime error" << std::endl;
         throw;
       }
     };
-
 };
+
+
+// validity check for integer binning structures
+template<> void BinningStructure<int>::checkValidity();
+
+
 
 #endif
