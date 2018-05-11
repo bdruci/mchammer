@@ -39,9 +39,18 @@ class ParticleAttributeBinningStructure {
 
 class GroupBinningStructure : public ParticleAttributeBinningStructure {
   private:
+    int numGroups;
     BinningStructure<int> binning;
   public:
-    GroupBinningStructure(int numGroups): ParticleAttributeBinningStructure(numGroups) , binning(0 , numGroups , numGroups, false) {};
+    // default constructor - all groups
+    GroupBinningStructure(int numGroups): ParticleAttributeBinningStructure(numGroups) , 
+                                          binning(0 , numGroups - 1 , numGroups , false) {};
+    // constructor  - single group
+    GroupBinningStructure(int numGroups , int group): ParticleAttributeBinningStructure(1) , 
+                                                      binning(group , group , 1 , false) {};
+    // constructor  - range of groups
+    GroupBinningStructure(int numGroups , int min , int max): ParticleAttributeBinningStructure(1 + max - min) , 
+                                                              binning(min , max , 1 + max - min , false) {};
    ~GroupBinningStructure() {};
     
     int getIndex( Part_ptr p );
@@ -51,8 +60,13 @@ class CollisionOrderBinningStructure : public ParticleAttributeBinningStructure 
   private:
     BinningStructure<int> binning;
   public:
-    CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure(max - min) , binning(min   , max   , 1 + max - min , false) {};
-    CollisionOrderBinningStructure(int order        ): ParticleAttributeBinningStructure( 1       ) , binning(order , order , 1             , false ) {};
+    // default constructor - all orders TODO needs adaptable binning structure
+    // constructor - single order
+    CollisionOrderBinningStructure(int order): ParticleAttributeBinningStructure( 1 ) , 
+                                               binning(order , order , 1             , false ) {};
+    // constructor - range of orders
+    CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure(max - min) , 
+                                                       binning(min   , max   , 1 + max - min , false) {};
    ~CollisionOrderBinningStructure() {};
     
     int getIndex( Part_ptr p );
@@ -67,7 +81,8 @@ class HistogramBinningStructure : public ParticleAttributeBinningStructure {
   protected:
     BinningStructure<double> binning;
   public:
-    HistogramBinningStructure(double min , double max , int size): ParticleAttributeBinningStructure(size) , binning(min , max , size , false) {};
+    HistogramBinningStructure(double min , double max , int size): ParticleAttributeBinningStructure(size) , 
+                                                                   binning(min , max , size , false) {};
    ~HistogramBinningStructure() {};
     
     virtual int getIndex( Part_ptr p ) = 0;
@@ -79,7 +94,8 @@ class AngleBinningStructure : public HistogramBinningStructure {
   private:
     point dir;
   public:
-    AngleBinningStructure(double min, double max , int size , point dirin): HistogramBinningStructure(min , max , size) , dir( dirin / (dirin * dirin) ) {};
+    AngleBinningStructure(double min, double max , int size , point dirin): 
+                          HistogramBinningStructure(min , max , size) , dir( dirin / (dirin * dirin) ) {};
 
     int getIndex( Part_ptr p );
 };
