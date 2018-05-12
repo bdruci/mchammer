@@ -124,3 +124,57 @@ TEST_CASE( "Collision order binning structure, collison range case", "[ParticleA
   }
 
 }
+
+
+TEST_CASE( "angle binning structure", "[ParticleAttributeBinningStructure.h]" ) {
+
+  point dir(0,1,0);
+  point dir2(0,-1,0);
+  AngleBinningStructure bin(0 , 1 , 10 , dir);
+
+  point pt(0,0,0);
+  Particle particle(pt , dir2 , 4); 
+  
+  SECTION ( "test angle binning structure, out of range" ) {
+    REQUIRE( bin.getIndex(std::make_shared<Particle>(particle)) == -1 );
+  }
+  
+  point dir3(0 , 0.97 , 0.2425); // dir3 . dir = 0.967... <- last element of bin
+  particle.setDir( dir3 );
+  
+  SECTION ( "test angle binning structure, out of range" ) {
+    REQUIRE( bin.getIndex(std::make_shared<Particle>(particle)) == 9 );
+  }
+
+}
+
+TEST_CASE( "angle binning structure, negative angles", "[ParticleAttributeBinningStructure.h]" ) {
+
+  point dir(0,1,0);
+  point dir2(0 , -1 , 0);
+  AngleBinningStructure bin(-0.9 , -0.1 , 2 , dir);
+
+  point pt(0,0,0);
+  Particle particle(pt , dir2 , 4); 
+  
+  SECTION ( "test angle binning structure, out of range" ) {
+    REQUIRE( bin.getIndex(std::make_shared<Particle>(particle)) == -1 );
+  }
+
+  
+  point dir3(0.588348, -0.784465, 0.196116); // dir3 . dir = -0.79.. <- 1st element of bin
+  particle.setDir( dir3 );
+  
+  SECTION ( "test angle binning structure, out of range" ) {
+    REQUIRE( bin.getIndex(std::make_shared<Particle>(particle)) == 0 );
+  }
+
+
+  point dir4(0 , 0.9 , 0.45589);
+  particle.setDir(dir4);
+
+  SECTION ( "test angle binning structure, out of range positivr" ) {
+    REQUIRE( bin.getIndex(std::make_shared<Particle>(particle)) == -1 );
+  }
+
+}
