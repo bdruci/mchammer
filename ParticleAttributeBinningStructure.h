@@ -44,10 +44,10 @@ class GroupBinningStructure : public ParticleAttributeBinningStructure {
   public:
     // default constructor - all groups
     GroupBinningStructure(int numGroups): ParticleAttributeBinningStructure(numGroups) , 
-                                          binning(1 , numGroups + 1 , numGroups + 1 , false) {};
+                                          binning(1 , numGroups + 1, numGroups  , false) {};
     // constructor  - single group
     GroupBinningStructure(int numGroups , int group): ParticleAttributeBinningStructure(1) , 
-                                                      binning(group , group + 1 , 1 , false) {};
+                                                      binning(group , group + 1, 1 , false) {};
     // constructor  - range of groups
     GroupBinningStructure(int numGroups , int min , int max): ParticleAttributeBinningStructure(1 + max - min) , 
                                                               binning(min , max + 1, 1 + max - min , false) {};
@@ -63,10 +63,10 @@ class CollisionOrderBinningStructure : public ParticleAttributeBinningStructure 
     // default constructor - all orders TODO needs adaptable binning structure
     // constructor - single order
     CollisionOrderBinningStructure(int order): ParticleAttributeBinningStructure( 1 ) , 
-                                               binning(order , order , 1             , false ) {};
+                                               binning(order , order + 1 , 1 , false) {};
     // constructor - range of orders
     CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure(max - min) , 
-                                                       binning(min   , max   , 1 + max - min , false) {};
+                                                       binning(min , max + 1 , 1 + max - min , false) {};
    ~CollisionOrderBinningStructure() {};
     
     int getIndex( Part_ptr p );
@@ -81,6 +81,8 @@ class HistogramBinningStructure : public ParticleAttributeBinningStructure {
   protected:
     BinningStructure<double> binning;
   public:
+    //  1st bin: [min , min + (max - min)/size )
+    // last bin: [max - (max - min)/size  , max)
     HistogramBinningStructure(double min , double max , int size): ParticleAttributeBinningStructure(size) , 
                                                                    binning(min , max , size , false) {};
    ~HistogramBinningStructure() {};

@@ -67,7 +67,7 @@ TEST_CASE( "BinningStructure with doubles, negative values, non-strict indexing"
 
 TEST_CASE( "BinningStructure with int, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< int > bin(12 , 23 , 6 , false);
+    BinningStructure< int > bin(12 , 24 , 6 , false);
 
     SECTION( "test getIndex with in range value" ) {
       REQUIRE( bin.getIndex(14) == 1 );
@@ -81,7 +81,7 @@ TEST_CASE( "BinningStructure with int, non-strict indexing", "[Utility]" ) {
 
 TEST_CASE( "BinningStructure with int, max size, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< int > bin(12 , 23 , 12 , false);
+    BinningStructure< int > bin(12 , 24 , 12 , false);
 
     SECTION( "test getIndex with in range value" ) {
       REQUIRE( bin.getIndex(14) == 2 );
@@ -95,7 +95,7 @@ TEST_CASE( "BinningStructure with int, max size, non-strict indexing", "[Utility
 
 TEST_CASE( "BinningStructure with int, negative values, non-strict indexing", "[Utility]" ) {
     
-    BinningStructure< int > bin(-3 , 3 , 7 , false);
+    BinningStructure< int > bin(-3 , 3 , 6 , false);
 
     SECTION( "test getIndex with in range negative value" ) {
       REQUIRE( bin.getIndex(-2) == 1 );
@@ -107,6 +107,10 @@ TEST_CASE( "BinningStructure with int, negative values, non-strict indexing", "[
     
     SECTION( "test getIndex with in range value pos value" ) {
       REQUIRE( bin.getIndex(2) == 5 );
+    }
+    
+    SECTION( "test getIndex with pos out of range at limit" ) {
+      REQUIRE( bin.getIndex(3) == -1 );
     }
     
     SECTION( "test getIndex with out of range value pos value" ) {
