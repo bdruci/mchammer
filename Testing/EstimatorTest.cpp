@@ -36,8 +36,8 @@ TEST_CASE( "Estimator scoring and score in ", "[Estimator]" ) {
     est.score(1.0);
     est.endHist();
     
-    double a = est.getScalarEstimator(3).first;
-    double b = est.getScalarEstimator(3).second;
+    double a = est.getEstimate(3);
+    double b = est.getUncertainty(3);
     
     // history tallies work
     SECTION ( " test flux " ) {
@@ -63,9 +63,8 @@ TEST_CASE( "collision estimator std dev", "[Estimator]" ) {
     est2.score(2.1);
     est2.endHist();
     
-    double a = est2.getScalarEstimator(3).first;
-    double b = est2.getScalarEstimator(3).second;
-
+    double a = est2.getEstimate(3);
+    double b = est2.getUncertainty(3);
 
     SECTION ( " test uncertainty" ) {
       REQUIRE( close( b , 1.43836) );
