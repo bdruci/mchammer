@@ -92,6 +92,14 @@ TEST_CASE( "linearizeIndices" , "[Utility]") {
   SECTION ( " 3d |-> 1d map , larger bins" ) {
     REQUIRE( Utility::linearizeIndices( indices3d_2 , binSizes3d_2 ) == 83 );
   }
+  
+  // case 2d |-> 1d array , reproduction of test case in EstimatorCollectionTest.cpp
+  vector<int> indices2d_c  {3,2};
+  vector<int> binSizes2d_c {10,5};
+  
+  SECTION ( " 3d |-> 1d map , larger bins" ) {
+    REQUIRE( Utility::linearizeIndices( indices2d_c , binSizes2d_c ) == 23 );
+  }
 
 
 }
