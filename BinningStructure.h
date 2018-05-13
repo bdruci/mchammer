@@ -23,7 +23,7 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include <limits>
+#include <stdexcept>
 
 #ifndef _BINNINGSTRUCTURE_H_
 #define _BINNINGSTRUCTURE_H_
@@ -51,7 +51,7 @@ template <typename attributeType> class BinningStructure {
       if (max < min ) {
         std::cerr << "Error in BinningStructure::BinningStructure!" << std::endl;
         std::cerr << "Max must be greater than min " << std::endl;
-        throw;
+        throw std::runtime_error("TypeError");
       }
       
       checkValidity();
@@ -82,7 +82,7 @@ template <typename attributeType> class BinningStructure {
         // if strict, throw an error
         std::cerr << "Error un Utility::BinningStructure::getIndex" << std::endl;
         std::cerr << "When BinningStructure::strict is true, a value outisde the binning structure results in a runtime error" << std::endl;
-        throw;
+        throw std::runtime_error("TypeError");
       }
     };
 };
