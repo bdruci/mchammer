@@ -61,6 +61,9 @@ class EstimatorCollection {
     // attributes within the range of binning structures for this tally
     int getLinearIndex(Part_ptr p);
 
+    // number of source particles
+    const unsigned long long numHist;
+
   public:
     // Types of Estimators
     // Allows EventHandler to pass in the correct multiplier
@@ -89,7 +92,7 @@ class EstimatorCollection {
     EstimatorType getType();
     bool validType(EstimatorType t);
 
-    EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t);
+    EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t , unsigned long long numHistin);
    ~EstimatorCollection() {};
 
     // score a tally in the correct bin, with a given multiplier
@@ -109,6 +112,9 @@ class EstimatorCollection {
     // only used for testing
     double checkEstimator(   vector< int > indices );
     double checkUncertainty( vector< int > indices );
+    
+    // error handling
+    void throwOutOfRange( std::string throwLocation );
   
 };
 

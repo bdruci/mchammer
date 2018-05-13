@@ -9,8 +9,8 @@
 #include "EstimatorCollection.h"
 
 
-EstimatorCollection::EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t): 
-                                          attributes(attributesin) , type(t) 
+EstimatorCollection::EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t, unsigned long long numHistin): 
+                                          attributes(attributesin) , type(t) , numHist(numHistin)
 {
 // set default geometric divisor to 1
 geometricDivisor = 1;
@@ -102,5 +102,33 @@ void EstimatorCollection::setGeometricDivisor(double div) {
     else {
       geometricDivisor = div;
     }
+}
+
+void EstimatorCollection::throwOutOfRange(std::string str) {
+    std::cerr << "Error in EstimatorCollection::" << str         << std::endl
+              << "Attempted to access an out of range Estimator" << std::endl;
+    throw std::runtime_error("OutOfRangeError");
+}
+
+// check estimator value at indices
+double EstimatorCollection::checkEstimator( vector<int> indices ) {
+  int l = Utility::linearizeIndices(indices , binSizes);
+  if ( l >= 0 and l < size ) {
+    return( estimators.at(l)->getEstimate( numHist )  );
+  }
+  else {
+    throwOutOfRange("checkEstimator");
+  }
+}
+
+// check estimator uncertainty at indices
+double EstimatorCollection::checkUncertainty( vector<int> indices ) {
+  int l = Utility::linearizeIndices(indices , binSizes);
+  if ( l >= 0 and l < size ) {
+    return( estimators.at(l)->getUncertainty( numHist)  );
+  }
+  else {
+    throwOutOfRange("checkUncertainty");
+  }
 }
 
