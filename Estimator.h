@@ -31,13 +31,13 @@ class Estimator {
     double getHistTally()    	   { return( histTally        ); };
     double getHistTallySqr() 	   { return( histTallySqr     ); };
     
-    // estimator methods
+    // scoring methods
+    void score(double val);
     void endHist();
-    std::pair < double , double > getScalarEstimator(unsigned long long);
-    
-    // virtual estimator methods
-    virtual void score(double val);
 
+    // output methods
+    double getEstimate(   unsigned long long numHist);
+    double getUncertainty( unsigned long long numHist);
 };
 
 #endif
