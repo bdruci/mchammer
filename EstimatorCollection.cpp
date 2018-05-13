@@ -12,22 +12,24 @@
 EstimatorCollection::EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t, unsigned long long numHistin): 
                                           attributes(attributesin) , type(t) , numHist(numHistin)
 {
-// set default geometric divisor to 1
-geometricDivisor = 1;
+  // set default geometric divisor to 1
+  geometricDivisor = 1;
 
-// default constructor calculates number of estimators required
+  // default constructor calculates number of estimators required
   size = 1;
+
   for (const auto &vals : attributes) {
     // determine the total number of estimators
     // and the number needed for each attribute
     size *= vals.second->getSize();
     binSizes.push_back( vals.second->getSize() );
-    for(int i = 0; i < vals.second->getSize(); ++i) {
-      // push back an estimator pointer for each bin in this attribute
-      Estimator tally;
-      Estimator_ptr estimator = std::make_shared<Estimator>(tally);
-      estimators.push_back(estimator);
-    }
+  }
+  
+  for(int i = 0; i < size; ++i) {
+    // push back an estimator pointer for each bin in this attribute
+    Estimator tally;
+    Estimator_ptr estimator = std::make_shared<Estimator>(tally);
+    estimators.push_back(estimator);
   }
 
   // check type validity and set type
@@ -79,6 +81,7 @@ int EstimatorCollection::getLinearIndex(Part_ptr p ) {
       return(-1);
     }
   }
+  
   return( Utility::linearizeIndices( indices ,  binSizes ) );
 };
 
