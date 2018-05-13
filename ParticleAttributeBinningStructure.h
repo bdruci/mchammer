@@ -80,7 +80,7 @@ class CollisionOrderBinningStructure : public ParticleAttributeBinningStructure 
     CollisionOrderBinningStructure(int order): ParticleAttributeBinningStructure( 1 , ParticleAttribute::collisionOrder ) , 
                                                binning(order , order + 1 , 1 , false) {};
     // constructor - range of orders
-    CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure(max - min , ParticleAttribute::collisionOrder) , 
+    CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure( 1 + max - min , ParticleAttribute::collisionOrder) , 
                                                        binning(min , max + 1 , 1 + max - min , false) {};
    ~CollisionOrderBinningStructure() {};
     
