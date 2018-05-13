@@ -101,6 +101,9 @@ class EstimatorCollection {
     // set the geometric divisor to normalize estimators
     // implementation depends on type
     void setGeometricDivisor(double div);
+
+    //gets
+    int getSize() { return( size ); };
     
     // end the history for all the Estimators
     void endHist();
