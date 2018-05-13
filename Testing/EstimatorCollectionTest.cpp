@@ -16,10 +16,10 @@ TEST_CASE( "group binning structure, collision estimator", "[EstimatorCollection
 
   // create an estimator collection of the collison type
   EstimatorCollection e( attributeMap , EstimatorCollection::EstimatorType::Collision);
+  e.setGeometricDivisor(1.0);
 
   SECTION( "Type test ") {
     REQUIRE( e.getType() == EstimatorCollection::EstimatorType::Collision );
   }
-
 
 }

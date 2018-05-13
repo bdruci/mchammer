@@ -6,7 +6,6 @@
  *  e.g. energy group, collision order, angle, type, etc.
  */
 
-#include <cassert>
 #include "EstimatorCollection.h"
 
 
@@ -30,6 +29,35 @@ geometricDivisor = 1;
       estimators.push_back(estimator);
     }
   }
+
+  // check type validity and set type
+  bool valid = validType(t);
+  if (valid) {
+    type = t;
+  }
+  else {
+    std::cerr << "Error in EstimatorCollection::EstimatorCollection"  << std::endl;
+    std::cerr << "Unknown EstimatorType" << std::endl;
+    throw;
+  }
+
+};
+
+
+// checks if an estimator type is in 
+// the possible choices
+bool EstimatorCollection::validType( EstimatorCollection::EstimatorType t ) {
+  bool valid = false;
+  for (auto t : possibleTypes ) {
+    if ( t == type) {
+      valid = true;
+    }
+  }
+  return(valid);
+}
+
+EstimatorCollection::EstimatorType EstimatorCollection::getType() {
+  return(type);
 };
 
 void EstimatorCollection::endHist() {
@@ -64,30 +92,15 @@ void EstimatorCollection::score(Part_ptr p  , double multiplier) {
 }
 
 void EstimatorCollection::setGeometricDivisor(double div) {
-  switch(type) {
-    case EstimatorType::SurfaceCurrent:
+    if ( type == EstimatorType::SurfaceCurrent) {
       // there is no geometric divisor for surface current - it is literally a count of the number of particles 
       // that cross a surface. This should throw a runtime error.
       std::cerr << "Error in EstimatorCollection::setGeometricDivisor"  << std::endl;
       std::cerr << "SurfaceCurrent estimators don't have geometric multipliers" << std::endl;
-      throw;
-      break;
-    case EstimatorType::SurfaceFluence:
-      // the geometric divisor for a surface fluence estimator is the area being tallied over
+      throw std::runtime_error("TypeError");
+    }
+    else {
       geometricDivisor = div;
-      break;
-    case EstimatorType::TrackLength:
-      // the geometric divisor for a track length estimator is the volume being tallied over
-      geometricDivisor = div;
-      break;
-    case EstimatorType::Collision:
-      // the geometric divisor for a collision estimator is the volume being tallied over
-      geometricDivisor = div;
-      break;
-    default: 
-      std::cerr << "Error in EstimatorCollection::setGeometricDivisor"  << std::endl;
-      std::cerr << "Unknown EstimatorType" << std::endl;
-      throw;
-  }
+    }
 }
 

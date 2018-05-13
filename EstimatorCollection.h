@@ -12,9 +12,9 @@
 #ifndef _ESTIMATORCOLLECTION_HEADER_
 #define _ESTIMATORCOLLECTION_HEADER_
 
-#include <functional>
 #include <map>
 #include <memory>
+#include <stdexcept>
 
 #include "Utility.h"
 #include "Particle.h"
@@ -32,7 +32,9 @@ class EstimatorCollection {
   private:
     //TODO implement XS input on construction for additional reaction rate multipliers
     
-    double geometricDivisor;
+    double geometricDivisor = 1;
+    bool   geometricDivSet  = false;
+
     int    size;
     vector <int>                   binSizes;
     std::map < string , Bin_ptr >  attributes;
@@ -53,12 +55,24 @@ class EstimatorCollection {
       TrackLength    ,
       Collision
     };
+    
+    // syntactic sugar for iterating through valid types
+    // new types added to EstimatorType must also be added
+    // to possibleTypes
+    const std::vector<EstimatorType> possibleTypes {
+       EstimatorType::SurfaceCurrent ,
+       EstimatorType::SurfaceFluence , 
+       EstimatorType::TrackLength    ,
+       EstimatorType::Collision
+    };
 
     // this holds the type 
     EstimatorType type;
     
-    EstimatorType getType() { return(type); };
-
+    // functions dealing with EstimatorType
+    EstimatorType getType();
+    bool validType(EstimatorType t);
+    
     EstimatorCollection(std::map< string , Bin_ptr > attributesin , EstimatorType t);
    ~EstimatorCollection() {};
 
