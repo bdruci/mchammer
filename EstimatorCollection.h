@@ -38,7 +38,10 @@ class EstimatorCollection {
     std::map < string , Bin_ptr >  attributes;
     vector   < Estimator_ptr    >  estimators;
     
-    void scoreTally(Part_ptr , double d); 
+    // find index of estimator to score
+    // the second boolean value in the pair is true of the particle has all it's 
+    // attributes within the range of binning structures for this tally
+    int getLinearIndex(Part_ptr p);
 
   public:
     
@@ -58,11 +61,6 @@ class EstimatorCollection {
 
     EstimatorCollection(std::map< string , Bin_ptr > attributesin , EstimatorType t);
    ~EstimatorCollection() {};
-
-    // find index of estimator to score
-    // the second boolean value in the pair is true of the particle has all it's 
-    // attributes within the range of binning structures for this tally
-    int getLinearIndex(Part_ptr p);
 
     // score a tally in the correct bin, with a given multiplier
     void score(Part_ptr p, double multiplier);
