@@ -128,7 +128,7 @@ namespace Utility {
   double quadSolve( double a, double b, double c );
   
   // translates n-dimensional indices on an n-dimensional array to a scalar index on an unraveled array 
-  // holding the same values
+  // holding the same values 
   int linearizeIndices( std::vector<int> indices , std::vector<int> binSizes );
 
 };

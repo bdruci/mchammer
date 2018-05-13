@@ -95,23 +95,31 @@ double Utility::quadSolve( double a, double b, double c ) {
     
 }
 
+// translates n-dimensional indices on an n-dimensional array to a scalar index on an unraveled array 
+// holding the same values 
+// e.g. : given 2d nxm array , gives the the indexing map to a 1d unraveled array of
+// length n*m
+// indexing is from 0 for both dimensions of the original 2d array and final unraveled 1d array
+// where the final 1d array unraveled across dimensions from left to right
+// example: n=5, m=3 (x,y) = (0,0) |-> 0    -- e.g. the top right element of the 2d matrix to 1st elemt of the final array
+// example: n=5, m=3 (x,y) = (3,1) |-> 8    -- e.g. the 4th value in the 2nd row of the 2d matrix maps to the 8th element of 
+//                                                  the unraveled array (5 being the length of the first dimension of the 2d
+//                                                  array, and the element being the 4th in the 2nd row -> 5 + 4 = 9, or 8
+//                                                  when indexed from 0.
 int Utility::linearizeIndices( std::vector<int> indices , std::vector<int> binSizes) {
   if(indices.size() != binSizes.size() ) {
     std::cerr << "Error in Utility::linearizeIndices! indices and binSizes must be the same size" << std::endl;
-    throw;
+    throw std::runtime_error("DimensionMismatchError");
   }
-  int n = 0;
-  if(binSizes.size() == 1) {
-    return(indices.at(0));
-  }
-  else {
-    for(int i = 1; i < indices.size(); ++i) {
-      int add = indices.at(i);
-      for(int j = i-1; j < 0; --j) {
-        add *= binSizes.at(j);
-      }
-      n += add;
+
+  int n = indices.at(0);
+  int multiplier; 
+  for (int i = 1; i < indices.size(); ++i) {
+    multiplier = 1;
+    for (int j = i - 1; j >=  0; j-- ) {
+      multiplier *= binSizes.at(j);
     }
+    n += indices.at(i) * multiplier;
   }
 
   return(n);
