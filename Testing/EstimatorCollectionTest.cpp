@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "../Catch.h"
+#include <cassert>
 #include "../EstimatorCollection.h"
 
 // NOTE: in Transport(), EstimatorCollection::endHist() would be called if and only if a source
@@ -19,6 +20,19 @@
 // In any case, the 1st two test cases are primarily to test the binning structure, and to make sure the correct value
 // is being scored in the correct location. The calculation of standard deviation is already being tested in EstimatorTest.cpp,
 // and it would be out of scope to test it again here. 
+
+bool assertClose(double a , double b ) {
+  double eps = 1E-10; 
+  try {
+    assert( fabs(a - b) < eps  );
+    return(true);
+  }
+  catch(...) {
+    std::cout << "failed with expansion: " << a << " == " << b << std::endl;
+    return(false);
+  }
+
+} 
 
 
 TEST_CASE( "group binning structure", "[EstimatorCollection]" ) {
@@ -117,6 +131,10 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" ) {
   EstimatorCollection e( attributeMap , EstimatorCollection::EstimatorType::Collision , 10);
   e.setGeometricDivisor(1.0);
 
+  SECTION( "test size ") {
+    REQUIRE( e.getSize() == 50 );
+  }
+
   point pt(0,0,0);
   point dir(0,1,0);
   Particle particle(pt , dir , 4);
@@ -129,13 +147,15 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" ) {
 
   vector<int> g4_nc0 {3, 0};
 
+  assert( e.checkEstimator(g4_nc0) == 0.1 );
   SECTION( "flux test, multibinning, g4 nc 0") {
     REQUIRE( e.checkEstimator(g4_nc0) == 0.1 );
   }
   
-  SECTION( "uncertainty test, multibinning g4 nc 0 ") {
-    REQUIRE( e.checkUncertainty(g4_nc0) == 0.3 );
-  }
+    assert( assertClose(e.checkUncertainty(g4_nc0) , 0.3) );
+    SECTION( "uncertainty test, multibinning g4 nc 0 ") {
+      REQUIRE( assertClose( e.checkUncertainty(g4_nc0) , 0.3) );
+    }
 
   // increment the particles collision counter twice so it is in ncol = 2
   p->countCollision();
@@ -151,18 +171,22 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" ) {
   e.score(p , 1.0);
   e.endHist();
   
+  assert(  e.checkEstimator(g4_nc0) == 0.1);
   SECTION( "flux test, multibinning, g4 nc 0 - make sure its unchanged after diff bin scored") {
     REQUIRE( e.checkEstimator(g4_nc0) == 0.1 );
   }
   
+  assert(  e.checkUncertainty(g4_nc0) == 0   );
   SECTION( "uncertainty test, multibinning g4 nc 0 - make sure its unchanged after diff bin scored") {
     REQUIRE( e.checkUncertainty(g4_nc0) == 0 );
   }
   
+  assert( e.checkEstimator(g4_nc2) == 0.2);
   SECTION( "flux test, multibinning, g4 nc 2") {
     REQUIRE( e.checkEstimator(g4_nc2) == 0.2 );
   }
   
+  assert(  e.checkUncertainty(g4_nc0) == 0.8  );
   SECTION( "uncertainty test, multibinning g4 nc 2") {
     REQUIRE( e.checkUncertainty(g4_nc0) == 0.8  );
   }
