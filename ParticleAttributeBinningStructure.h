@@ -24,13 +24,25 @@
 
 typedef std::shared_ptr<Particle> Part_ptr;
 
+// needed to limit the interface with wrapping classes to only the
+// allowed particle attributes
+enum class ParticleAttribute {
+  group , 
+  collisionOrder , 
+  angle
+};
+
 class ParticleAttributeBinningStructure {
   protected:
     int size;
+    const ParticleAttribute attr;
+
   public:
-    ParticleAttributeBinningStructure(int sizein): size(sizein) {};
+    ParticleAttributeBinningStructure(int sizein , ParticleAttribute a): size(sizein) , attr(a) {};
     virtual int getIndex( Part_ptr p) = 0; 
     int getSize() { return(size); };
+    
+    ParticleAttribute getAttribute() { return(attr); };
 };
 
 /* -------------------------------------------------------------------------------------------
@@ -41,35 +53,38 @@ class GroupBinningStructure : public ParticleAttributeBinningStructure {
   private:
     int numGroups;
     BinningStructure<int> binning;
+    
   public:
     // default constructor - all groups
-    GroupBinningStructure(int numGroups): ParticleAttributeBinningStructure(numGroups) , 
+    GroupBinningStructure(int numGroups): ParticleAttributeBinningStructure(numGroups , ParticleAttribute::group ) , 
                                           binning(1 , numGroups + 1, numGroups  , false) {};
     // constructor  - single group
-    GroupBinningStructure(int numGroups , int group): ParticleAttributeBinningStructure(1) , 
+    GroupBinningStructure(int numGroups , int group): ParticleAttributeBinningStructure(1 , ParticleAttribute::group) , 
                                                       binning(group , group + 1, 1 , false) {};
     // constructor  - range of groups
-    GroupBinningStructure(int numGroups , int min , int max): ParticleAttributeBinningStructure(1 + max - min) , 
+    GroupBinningStructure(int numGroups , int min , int max): ParticleAttributeBinningStructure(1 + max - min , ParticleAttribute::group) , 
                                                               binning(min , max + 1, 1 + max - min , false) {};
    ~GroupBinningStructure() {};
     
     int getIndex( Part_ptr p );
+    
 };
  
 class CollisionOrderBinningStructure : public ParticleAttributeBinningStructure {
   private:
     BinningStructure<int> binning;
+  
   public:
     // default constructor - all orders TODO needs adaptable binning structure
     // constructor - single order
-    CollisionOrderBinningStructure(int order): ParticleAttributeBinningStructure( 1 ) , 
+    CollisionOrderBinningStructure(int order): ParticleAttributeBinningStructure( 1 , ParticleAttribute::collisionOrder ) , 
                                                binning(order , order + 1 , 1 , false) {};
     // constructor - range of orders
-    CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure(max - min) , 
+    CollisionOrderBinningStructure(int min , int max): ParticleAttributeBinningStructure(max - min , ParticleAttribute::collisionOrder) , 
                                                        binning(min , max + 1 , 1 + max - min , false) {};
    ~CollisionOrderBinningStructure() {};
     
-    int getIndex( Part_ptr p );
+    int getIndex( Part_ptr p );   
 };
 
 /* -------------------------------------------------------------------------------------------
@@ -83,7 +98,7 @@ class HistogramBinningStructure : public ParticleAttributeBinningStructure {
   public:
     //  1st bin: [min , min + (max - min)/size )
     // last bin: [max - (max - min)/size  , max)
-    HistogramBinningStructure(double min , double max , int size): ParticleAttributeBinningStructure(size) , 
+    HistogramBinningStructure(double min , double max , int size, ParticleAttribute a): ParticleAttributeBinningStructure(size , a) , 
                                                                    binning(min , max , size , false) {};
    ~HistogramBinningStructure() {};
     
@@ -97,7 +112,7 @@ class AngleBinningStructure : public HistogramBinningStructure {
     point dir;
   public:
     AngleBinningStructure(double min, double max , int size , point dirin): 
-                          HistogramBinningStructure(min , max , size) , dir( dirin / (dirin * dirin) ) {};
+                          HistogramBinningStructure(min , max , size , ParticleAttribute::angle) , dir( dirin / (dirin * dirin) ) {};
 
     int getIndex( Part_ptr p );
 };

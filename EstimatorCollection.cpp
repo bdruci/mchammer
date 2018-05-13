@@ -9,7 +9,7 @@
 #include "EstimatorCollection.h"
 
 
-EstimatorCollection::EstimatorCollection(std::map< string , Bin_ptr > attributesin , EstimatorType t): 
+EstimatorCollection::EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t): 
                                           attributes(attributesin) , type(t) 
 {
 // set default geometric divisor to 1

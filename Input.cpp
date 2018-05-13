@@ -401,9 +401,9 @@ void Input::readInput( std::string xmlFilename ) {
     Bin_ptr binning = std::make_shared<GroupBinningStructure>(nGroups);
     
     // initialize attribute map 
-    std::map< string , Bin_ptr> attributeMap;
+    std::map< ParticleAttribute , Bin_ptr> attributeMap;
     // For now just make one with the group binning as the only attribute
-    attributeMap["Group"] = binning;
+    attributeMap[ ParticleAttribute::group ] = binning;
 
       
     if ( type == "CollisionTally" ) {

@@ -5,7 +5,18 @@
  * This class is for grouping tallies to get an answer as a function of particle attributes
  *  e.g. energy group, collision order, angle, type, etc.
  *
- * The first level of child classes derived from EstimatorCollection cannot be cast as EstimatorCollections
+ *  An EstimatorCollection is created at input, and belongs to one or more geometric objects
+ *  (e.g. cell, surface, tet). At this time, all the particlr attributes to be binned over
+ *  and their respective structures are required, as well as the type of Estimator being created.
+ *
+ *  At this time, a geometric divisor can be set to normalize the results of the estimator,
+ *  based on it's type and the geometric objects it belongs to.
+ *  
+ *
+ *  Scoring is handled by event handler, which determines the correct multiplier based on the 
+ *  type of Estimator, and feeds the particle and multipler to the EstimatorCollection for 
+ *  scoring
+ *
  *
  */
 
@@ -22,7 +33,6 @@
 #include "ParticleAttributeBinningStructure.h"
 
 using std::vector;
-using std::string;
 
 typedef std::shared_ptr<Estimator>                         Estimator_ptr;
 typedef std::shared_ptr<Particle>                          Part_ptr;
@@ -30,15 +40,21 @@ typedef std::shared_ptr<ParticleAttributeBinningStructure> Bin_ptr;
 
 class EstimatorCollection {
   private:
-    //TODO implement XS input on construction for additional reaction rate multipliers
-    
+    // a multiplier to normalize an estimate by e.g. volume of a cell/cells or area
+    // of a surface/surfaces
     double geometricDivisor = 1;
-    bool   geometricDivSet  = false;
-
+    
+    // number of Estimators in the collection
     int    size;
-    vector <int>                   binSizes;
-    std::map < string , Bin_ptr >  attributes;
-    vector   < Estimator_ptr    >  estimators;
+
+    // the number of bins over each attribute
+    vector <int>  binSizes;
+    
+    // the binning structure for each attribute
+    std::map < ParticleAttribute , Bin_ptr >  attributes;
+
+    // all the estimators in the collection
+    vector   < Estimator_ptr >  estimators;
     
     // find index of estimator to score
     // the second boolean value in the pair is true of the particle has all it's 
@@ -46,8 +62,8 @@ class EstimatorCollection {
     int getLinearIndex(Part_ptr p);
 
   public:
-    
-    // This allows EventHandler to pass in the correct multiplier
+    // Types of Estimators
+    // Allows EventHandler to pass in the correct multiplier
     // corresponding to the estimator type
     enum class EstimatorType {
       SurfaceCurrent ,
@@ -72,19 +88,28 @@ class EstimatorCollection {
     // functions dealing with EstimatorType
     EstimatorType getType();
     bool validType(EstimatorType t);
-    
-    EstimatorCollection(std::map< string , Bin_ptr > attributesin , EstimatorType t);
+
+    EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t);
    ~EstimatorCollection() {};
 
     // score a tally in the correct bin, with a given multiplier
     void score(Part_ptr p, double multiplier);
 
     // set the geometric divisor to normalize estimators
-    // Implementation depends on type
+    // implementation depends on type
     void setGeometricDivisor(double div);
-
-    void endHist();
     
+    // end the history for all the Estimators
+    void endHist();
+
+    // print estimators
+    void printEstimators( std::string filename);
+    
+    // for checking values in a specific bin in EstimatorCollection
+    // only used for testing
+    double checkEstimator(   vector< int > indices );
+    double checkUncertainty( vector< int > indices );
+  
 };
 
 
