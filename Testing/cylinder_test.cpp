@@ -12,7 +12,7 @@ TEST_CASE( "Cylinder", "[cylinder]" ) {
     double y0 =  1.0;
     double z0 =  1.0;
     double rad  =  2;
-    point dir(1, 0, 0);
+    char dir = 'x';
 
     std::string name = "SimpleCyl";
 
