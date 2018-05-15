@@ -70,7 +70,9 @@ private:
     char dir;
 public:
     cylinder( std::string label, double x_in, double y_in, double z_in, double rad_in, char dir_in)
-            : surface(label), x0(x_in), y0(y_in), z0(z_in), rad(rad_in), dir(dir_in) { };
+            : surface(label), x0(x_in), y0(y_in), z0(z_in), rad(rad_in), dir(dir_in) { 
+        assert((dir == 'x' || dir == 'X' || dir == 'y' || dir == 'Y' || dir == 'z' || dir == 'Z') && rad > 0);
+    };
     ~cylinder() {};
 
     point  getNormal(point p);

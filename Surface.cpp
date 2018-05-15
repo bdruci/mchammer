@@ -75,7 +75,6 @@ point sphere::getNormal(point pt){
 //Requires: a valid cylinder
 //Effects: Returns the solution to the equation of the equation at a point
 double cylinder::eval( point p ) {
-  assert((dir == 'x' || dir == 'X' || dir == 'y' || dir == 'Y' || dir == 'z' || dir == 'Z') && rad > 0);
   //If along x-axis 
   if(dir == 'x' || dir == 'X') {
     //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
@@ -99,7 +98,6 @@ double cylinder::eval( point p ) {
 //Requires: a valid cylinder
 //Effects: returns the distance from the point p on its path u to the surface
 double cylinder::distance (point p, point u ) {
-  assert((dir == 'x' || dir == 'X' || dir == 'y' || dir == 'Y' || dir == 'z' || dir == 'Z') && rad > 0);
   // difference between each coordinate and current point
   point q( p.x - x0, p.y - y0, p.z - z0 );
 
@@ -157,7 +155,6 @@ double cylinder::distance (point p, point u ) {
 //Effects: returns the normal vector of the surface at the point or nullptr if
 //point fails to be on the surface
 point  cylinder::getNormal( point p ) {
-  assert((dir == 'x' || dir == 'X' || dir == 'y' || dir == 'Y' || dir == 'z' || dir == 'Z') && rad > 0);
   // check if the crossing point is on the surface
   if(Utility::FloatEqual(eval(p),0)) {
     // the gradient vector of the cylinder, general for all orientations
