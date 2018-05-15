@@ -117,6 +117,42 @@ int Utility::linearizeIndices( std::vector<int> indices , std::vector<int> binSi
   return(n);
 }
 
+//Requires: Two double numbers and a positive, non-zero int tolerance to compare the two - 
+bool Utility::FloatEqual(double lhs, double rhs, int tolerance){
+  assert(tolerance > 0);
+  //Initialize outside of conditionals
+  double diff = 1;
+  double tol = std::numeric_limits<double>::epsilon() * tolerance;
+
+  if(lhs == rhs){
+    return true;
+  }
+  //Weird corner case - the difference of the absolute value of the input is
+  //within the tolerance but one number is negative
+  //Still have to check if the numbers are inside acceptable
+  //Range that happens to comtain zero
+  else if((lhs * rhs) < 0){
+    lhs = std::abs(lhs);
+    rhs = std::abs(rhs);
+    diff = lhs + rhs;
+  }
+  else if(lhs > rhs){
+    diff = lhs - rhs;
+  }
+  else{
+    diff = rhs - lhs;
+  }
+
+  if(diff < tol){
+    return true;
+  }
+  return false;
+}
+
+bool Utility::FloatEqual(double lhs, double rhs){
+  return FloatEqual(lhs, rhs, 1000);
+}
+
 /* ****************************************************************************************************** * 
  * Generic Vector and Point Operations
  *
