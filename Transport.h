@@ -46,22 +46,24 @@ typedef std::shared_ptr<HammerTime> Time_ptr;
 typedef std::shared_ptr<Geometry>   Geom_ptr;
 typedef std::shared_ptr<Constants>  Cons_ptr;
 
+typedef std::shared_ptr< EstimatorCollection >  EstCol_ptr;
+
 class Transport {
 private:
     int numHis;
-    //vector<Mat_ptr> mats;
-    //vector<Cell_ptr> cells;    //vector of cells (to be moved into Geometry)
-    //vector<Surf_ptr> surfaces; //vector of surfaces '
     stack<Part_ptr> pstack;
-    vector<double> tallies;
     Cons_ptr constants;
     Geom_ptr geometry; 
     Mesh_ptr mesh;
     Time_ptr timer;
     
+    // all estimators in the problem must be accessible as pointers from 
+    // transport so as to efficiently end histories 
+    vector < EstCol_ptr > estimators;
+    
 public:
     //constructor
-    Transport( Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein );
+    Transport( Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein);
    ~Transport() {}; 
         //to be altered once input is added
     
@@ -69,6 +71,10 @@ public:
     //void setup();
     void runTransport();
     void output();
+    
+    // Estimator interface
+    void addEstimator( EstCol_ptr newEstimator) { estimators.push_back(newEstimator); };
+    void endHist(); 
 };
 
 #endif

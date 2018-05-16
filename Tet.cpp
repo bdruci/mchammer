@@ -150,21 +150,14 @@ bool Tet::amIHere( const std::vector< double >& testPoint )
 }
 
 // Estimator interface
-
-void Tet::scoreTally(Part_ptr p , double xs) {
-  // for each EstimatorCollection
-    // for each attribute
-      // get the index of the Estimator to score
-      // score the estimator
-}
-
-void Tet::endTallyHist() {
-    for(auto est : estimators) {
-        est->endHist();
-    }
-}
-
-
 void Tet::addEstimator( EstCol_ptr newEstimator ) {
-	estimators.push_back( newEstimator );
+  if ( newEstimator->getType() == EstimatorCollection::EstimatorType::Collision ) {
+	  estimators.push_back( newEstimator );
+  }
+  else {
+    std::cerr << "Error in Tet::AddEstimator" << std::endl 
+              << "An unstructures mesh element, like a tetrahedral mesh element, can only have a collision type Estimator" << std::endl;
+    
+    throw std::runtime_error("IncompatibleEstimatorType");
+  }
 }

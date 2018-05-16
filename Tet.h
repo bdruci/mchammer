@@ -38,7 +38,7 @@ private:
     vector< double > vert2;
     vector< double > vert3;
     vector< double > vert4;
-	vector< double > A1, A2, A3, A4;; //3x3 determinants precomp
+	  vector< double > A1, A2, A3, A4;; //3x3 determinants precomp
 
     // Estimators
     vector< EstCol_ptr > estimators;
@@ -53,7 +53,6 @@ public:
                       std::shared_ptr<point> p3, std::shared_ptr<point> p4 );
     
     void addVertice( std::shared_ptr< point > inVertice );
-    void addEstimator( EstCol_ptr newEstimator );
     void setID( int tetID );
 
     int              getID();
@@ -62,14 +61,12 @@ public:
     vector< double > getVert3();
     vector< double > getVert4();
     vector< double > getCentroid();
-    std::vector< EstCol_ptr > getEstimators() { return estimators; };
     
     bool amIHere( const std::vector< double >& testPoint );
-
-    // Estimator interface
-    void scoreTally(Part_ptr p , double xs); 
-    void endTallyHist();
-  
+    
+    // esitmator interface 
+    void addEstimator( EstCol_ptr newEstimator );
+    vector < EstCol_ptr > getEstimators() { return(estimators); };
 };
 
 #endif /* Tet_h */

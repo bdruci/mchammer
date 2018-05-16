@@ -218,38 +218,6 @@ Tet_ptr Mesh::whereAmI( point pos )
     return hereIAm;
 }
 
-void Mesh::scoreTally(Part_ptr p, double xs) {
-    //what tet in the mesh did the particle collide in?
-    Tet_ptr t = whereAmI( p->getPos() );
-    
-    // make sure its a valid mesh element
-    if(t != nullptr) {
-        //score the tally in that tet
-        t->scoreTally(p , xs);
-        for(int i = 0; i < histCounter; i++)
-        {
-            if(t == tetHist[i])
-            {
-                return;
-            }
-        }
-        tetHist[histCounter] = t;
-        histCounter++;
-    }
-    else {
-        std::cerr << "Particle could not be located in the Mesh, failed to score tally " << std::endl;
-    }
-}
-
-void Mesh::endTallyHist() {
-    for(int i = 0; i < histCounter; i++)
-    {
-        tetHist[i]->endTallyHist();
-        tetHist[i] = nullptr;
-    }
-    histCounter = 0;
-}
-
 void Mesh::printMeshTallies() {
     std::cout << "Printing mesh tallies to " << "outfiles/" << outFilename << "..." << std::endl;
 

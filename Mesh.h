@@ -64,8 +64,6 @@ public:
     std::vector< Tet_ptr > getTets() { return tetVector; };
 
     // estimator interface
-    void scoreTally( Part_ptr p , double xs );
-    void endTallyHist();
     void printMeshTallies();
 
     // VTK (xml) interface

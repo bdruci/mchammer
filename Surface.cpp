@@ -71,3 +71,17 @@ point sphere::getNormal(point pt){
     return(p);
   }
 }
+
+
+void surface::addEstimator( EstCol_ptr newEstimator) { 
+  if ( newEstimator->getType() == EstimatorCollection::EstimatorType::SurfaceCurrent 
+   or  newEstimator->getType() == EstimatorCollection::EstimatorType::SurfaceFluence ) {
+	  estimators.push_back( newEstimator );
+  }
+  else {
+    std::cerr << "Error in Cell::AddEstimator" << std::endl 
+              << "A Cell can only have Surface Fluence or Surface Current type estimators" << std::endl;
+    
+    throw std::runtime_error("IncompatibleEstimatorType");
+  }
+}

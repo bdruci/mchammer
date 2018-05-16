@@ -22,7 +22,7 @@ public:
 
     
     // Estimator sets/gets
-    void addEstimator( EstCol_ptr newEstimator) { estimators.push_back( newEstimator ); };
+    void addEstimator( EstCol_ptr newEstimator);
     std::vector< EstCol_ptr > getEstimators() { return estimators; };
     
     virtual std::string name() { return surface_name; };

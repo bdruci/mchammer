@@ -59,20 +59,23 @@ double Cell::distToSurface(Part_ptr pi)
     return dist;
 }
 
-// Estimator interface
-
-void Cell::scoreTally(Part_ptr p , double xs) 
-{
-  // for each EstimatorCollection
-    // for each attribute
-      // get the index of the Estimator to score
-      // score the estimator
+Surf_ptr Cell::getClosestSurface( Part_ptr pi) {
+    Surf_ptr close_surface;
+    double dist;
+    tie(close_surface,dist) = closestSurface(pi);
+    return close_surface;
 }
 
-void Cell::endTallyHist() 
-{
-  for(auto est : estimators) {
-      est->endHist();
+
+void Cell::addEstimator( EstCol_ptr newEstimator) { 
+  if ( newEstimator->getType() == EstimatorCollection::EstimatorType::Collision 
+   or  newEstimator->getType() == EstimatorCollection::EstimatorType::TrackLength ) {
+	  estimators.push_back( newEstimator );
+  }
+  else {
+    std::cerr << "Error in Cell::AddEstimator" << std::endl 
+              << "A Cell can only have collison or tracklength type estimators" << std::endl;
+    
+    throw std::runtime_error("IncompatibleEstimatorType");
   }
 }
-

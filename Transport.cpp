@@ -8,20 +8,30 @@
 #include "Transport.h"
 using std::make_shared;
 
+void Transport::endHist() {
+  for (auto est : estimators) {
+    est->endHist();
+  }
+}
+
 //constructor
 Transport::Transport(Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein): geometry(geoin) , constants(consti), mesh(meshin) , timer(timein) {}
  
 void Transport::runTransport()
 {
     numHis = constants->getNumHis();
-    double tally = 0;
+
+    // construct event handlers
+    CollisionHandler       collisionHandler;
+    SurfaceCrossingHandler surfaceCrossingHandler;
 
     for( unsigned long long i = 0; i < numHis; i++ )
     {
         //start a timer
         timer->startHist();
-	RN_init_particle(i);
-        //sample src 
+	      RN_init_particle(i);
+        
+        //sample source
         Part_ptr p_new = geometry->sampleSource();
         Cell_ptr startingCell = geometry->whereAmI(p_new->getPos());
         p_new->setCell(startingCell);
@@ -40,20 +50,18 @@ void Transport::runTransport()
                 
                 if(d2s > d2c) //collision!
                 {
-                    // score collision tally in current cell
-                    timer->startTimer("scoring collision tally");
-                    current_Cell->scoreTally(p , current_Cell->getMat()->getMacroXS( p->getGroup() ) ); 
-                    tally++;
-                    timer->endTimer("scoring collision tally");
-
-                    timer->startTimer("scoring mesh tally");
-                    //std::cout << "About to score mesh tally " << std::endl;
-                    // score mesh tally
-                    //mesh->scoreTally( p , current_Cell->getMat()->getMacroXS( p ) ); // TODO: uncomment this line (for testing only)
-                    //std::cout << "We scored that mesh tally! " << std::endl;
-                    timer->endTimer("scoring mesh tally");
-
+                    // keep track of initial position and move particle
+                    point oldPos = p->getPos();
                     p->move(d2c);
+
+                    // handle estimators
+                    timer->startTimer("handling estimators at collision");
+                    collisionHandler.setCurrentCell(current_Cell);
+                    collisionHandler.setCurrentTet( mesh->whereAmI( p->getPos() ) );
+                    collisionHandler.score( std::make_shared<point>(oldPos) , p );  
+                    timer->endTimer("handling estimators at collision");
+
+
                     // sample the reaction
                     React_ptr reactionToSample = current_Cell->getMat()->sampleCollision( p->getGroup() );
                     reactionToSample->sample( p, pstack );
@@ -62,8 +70,20 @@ void Transport::runTransport()
                 else //hit surface
                 {
 
+                    // keep track of initial position and move particle
+                    point oldPos = p->getPos();
                     p->move(d2s + 0.00000001);
+                    
+                    // handle estimators
+                    timer->startTimer("handling estimators at surface crossing");
+                    surfaceCrossingHandler.setSurfaceCrossed( current_Cell->getClosestSurface( p ) );
+                    surfaceCrossingHandler.setCellLeft(current_Cell);
+                    surfaceCrossingHandler.score( std::make_shared<point>(oldPos) , p );  
+                    timer->endTimer("handling estimators at surface crossing");
+                    
+                    // update cell
                     Cell_ptr newCell = geometry->whereAmI(p->getPos());
+
                 if(newCell == nullptr)
                 {
                     p->kill();
@@ -76,18 +96,12 @@ void Transport::runTransport()
             }
             pstack.pop();
         }
-        //tell all estimators that the history has ended
-         for( auto cell : geometry->getCells() ) {
-        cell->endTallyHist();
-         }
-
-           // end histories in the mesh
-           mesh->endTallyHist();
+        // end the history in all the estimators
+        endHist();
 
         // end the history timer
         timer->endHist();
     }
-    tally /= numHis;
 }
 
 void Transport::output() {

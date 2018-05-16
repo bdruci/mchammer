@@ -53,8 +53,9 @@ public:
  ~Cell() {};
     
   void    addSurfacePair ( std::pair< Surf_ptr, bool > newSurfacePair ) { surfacePairs.push_back( newSurfacePair ); };
-  void    addEstimator   ( EstCol_ptr newEstimator                    ) { estimators.push_back( newEstimator );     };
   void    setMaterial    ( Mat_ptr newMaterial                        ) { mat = newMaterial;                        };
+  
+  void    addEstimator   ( EstCol_ptr newEstimator );
 
   Mat_ptr                   getMat()        { return mat;        };
   std::string               name()          { return cellName;   };
@@ -64,12 +65,9 @@ public:
   double                 distToSurface   ( Part_ptr pi );
   double                 distToCollision ( int group   );
   pair<Surf_ptr, double> closestSurface  ( Part_ptr p  );
+  Surf_ptr getClosestSurface( Part_ptr pi);
   
   bool amIHere( const point& pos );
 
-  // Estimator interface
-  void scoreTally(Part_ptr p , double xs); 
-  void endTallyHist();
-  // TODO get Tally output
 };
 #endif 

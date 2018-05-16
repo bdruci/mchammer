@@ -1,4 +1,3 @@
-
 /*
  * Author: Kyle Beyer
  *
@@ -8,8 +7,7 @@
 
 // Varaidic template function to score all the estimator collections of an arbitrary 
 // number of objects who have a getEstimators methods that retunrs a vector of EstimatorCollections
-// into single vector of estimator collections, in linear time (see vector::inster)
-
+// into single vector of estimator collections, in linear time (see vector::insert)
 
 double CollisionHandler::getMultiplier(EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle) {
   double multiplier;
@@ -29,27 +27,38 @@ double CollisionHandler::getMultiplier(EstimatorCollection::EstimatorType type ,
     default:
       std::cerr << "Error in CollisonHandler::getMultiplier" << std::endl;
       std::cerr << "Collision handler can only get multipliers for TrackLength and Collison estimator types" << std::endl;
-      std::cerr << "This is because only TrackLength and Collision tallies are scored on Collisions" << std::endl;
-      throw;
+      throw std::runtime_error("IncompatibleEstimatorType");
   }
 
   return(multiplier);
 
 }
 
+// scores all the estimators in the currentCell and currentTet
+// if they have been set before the function call
 void CollisionHandler::score(Point_ptr p0 , Part_ptr particle) {
   double multiplier;
-  for( auto est : currentCell->getEstimators() ) {
-    // score all estimators that belong to the cell the particle has collided in
-    // these can be collision or track length estimators
-    multiplier = getMultiplier( est->getType() , p0 , particle);
-    est->score(particle , multiplier);
+  if ( currentCell != NULL) {
+    for( auto est : currentCell->getEstimators() ) {
+      // score all estimators that belong to the cell the particle has collided in
+      // these can be collision or track length estimators
+      multiplier = getMultiplier( est->getType() , p0 , particle);
+      est->score(particle , multiplier);
+    }
+    // reset currentCell to null
+    // This forces the client to reset the currentCell every time score is called
+    // This condition is forced to avoid accidently scoring the wrong estimators
+    currentCell = NULL;
   }
-  for( auto est : currentTet->getEstimators() ) {
-    // score all estimators that belong to the unstructured mesh element that the particle has collided in
-    // this can only be a collision estimator
-    multiplier = getMultiplier( est->getType() , p0 , particle);
-    est->score(particle , multiplier);
+  if ( currentTet != NULL ) {
+    for( auto est : currentTet->getEstimators() ) {
+      // score all estimators that belong to the unstructured mesh element that the particle has collided in
+      // this can only be a collision estimator
+      multiplier = getMultiplier( est->getType() , p0 , particle);
+      est->score(particle , multiplier);
+    }
+    // reset currentTet to null, so the client must reset it before the next call to score
+    currentTet = NULL;
   }
 
 }
@@ -78,7 +87,7 @@ double SurfaceCrossingHandler::getMultiplier(EstimatorCollection::EstimatorType 
       std::cerr << "Error in SurfaceCrossingHandler::getMultiplier" << std::endl;
       std::cerr << "SurfaceCrossing handler can only get multipliers for TrackLength, SurfaceCurrent and SurfaceFluence estimator types" << std::endl;
       std::cerr << "This is because only TrackLength and Collision tallies are scored on Collisions" << std::endl;
-      throw;
+      throw std::runtime_error("IncompatibleEstimatorType");
   }
 
   return(multiplier);
@@ -86,16 +95,24 @@ double SurfaceCrossingHandler::getMultiplier(EstimatorCollection::EstimatorType 
 
 void SurfaceCrossingHandler::score(Point_ptr p0 , Part_ptr particle) {
   double multiplier;
-  for( auto est : surfaceCrossed->getEstimators() ) {
-    // score all estimators that belong the surface the particle has crossed
-    // these can only be surface current of surface fluence estimators
-    multiplier = getMultiplier( est->getType() , p0 , particle);
-    est->score(particle , multiplier);
+  if ( surfaceCrossed != NULL) {
+    for( auto est : surfaceCrossed->getEstimators() ) {
+      // score all estimators that belong the surface the particle has crossed
+      // these can only be surface current of surface fluence estimators
+      multiplier = getMultiplier( est->getType() , p0 , particle);
+      est->score(particle , multiplier);
+    }
+    // reset surfaceCrossed to null, so client must reset it before the next call to score
+    surfaceCrossed = NULL;
   }
-  for( auto est : cellLeft->getEstimators() ) {
-    // score all estimators that belong to the cell the particle has just left
-    // these can only be track length estimators
-    multiplier = getMultiplier( est->getType() , p0 , particle);
-    est->score(particle , multiplier);
+  if ( cellLeft != NULL ) {
+    for( auto est : cellLeft->getEstimators() ) {
+      // score all estimators that belong to the cell the particle has just left
+      // these can only be track length estimators
+      multiplier = getMultiplier( est->getType() , p0 , particle);
+      est->score(particle , multiplier);
+    }
+    // reset cellLeft to null, so client must reset it before the next call to score
+    cellLeft = NULL;
   }
 }

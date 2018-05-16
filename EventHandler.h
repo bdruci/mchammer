@@ -40,14 +40,12 @@ typedef std::shared_ptr< EstimatorCollection >  EstCol_ptr;
 
 class EventHandler {
 // abstract base class for EventHandler
-
   public:
     EventHandler() {};
    ~EventHandler() {};
 
     virtual double getMultiplier( EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle) = 0; 
     virtual void   score(Point_ptr p0 , Part_ptr particle)  = 0;
-
 };
 
 class CollisionHandler : public EventHandler {
@@ -61,11 +59,15 @@ class CollisionHandler : public EventHandler {
     Tet_ptr  currentTet;
    
   public:
-    CollisionHandler() {};
+    CollisionHandler(): currentTet(NULL) , currentCell(NULL) {};
    ~CollisionHandler() {};
 
     void setCurrentCell( Cell_ptr cell ) { currentCell = cell; };
     void setCurrentTet(  Tet_ptr  tet  ) { currentTet  = tet;  };
+    
+    Cell_ptr getCurrentCell() { return( currentCell ); };
+    Tet_ptr  getCurrentTet()  { return( currentTet  ); };
+
     
     double getMultiplier( EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle);
     void   score(Point_ptr p0 , Part_ptr particle);
@@ -84,11 +86,14 @@ class SurfaceCrossingHandler : public EventHandler {
     Cell_ptr cellLeft;
 
   public:
-    SurfaceCrossingHandler() {};
+    SurfaceCrossingHandler(): surfaceCrossed(NULL) , cellLeft(NULL) {};
    ~SurfaceCrossingHandler() {};
 
     void setSurfaceCrossed( Surf_ptr surf )  { surfaceCrossed = surf; };
     void setCellLeft(       Cell_ptr cell )  { cellLeft       = cell; };
+    
+    Surf_ptr  getCurrentTet()  { return( surfaceCrossed  ); };
+    Cell_ptr  getCellLeft()    { return( cellLeft        ); };
 
     double getMultiplier( EstimatorCollection::EstimatorType type , Point_ptr p0 , Part_ptr particle);
     void   score(Point_ptr p0 , Part_ptr particle);
