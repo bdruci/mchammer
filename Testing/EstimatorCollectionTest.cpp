@@ -23,8 +23,8 @@
 
 bool assertClose(double a , double b ) {
   double eps = 1E-10; 
-    std::cout << "expansion: " << a << " == " << b << std::endl;
-    std::cout << fabs(a - b) << "/" << eps <<std::endl;
+    //std::cout << "expansion: " << a << " == " << b << std::endl;
+    //std::cout << fabs(a - b) << "/" << eps <<std::endl;
   try {
     assert( fabs(a - b) < eps  );
     return(true);
@@ -185,5 +185,114 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" )   
   SECTION( "uncertainty test, multibinning g4 nc 2") {
     REQUIRE( e.checkUncertainty(g4_nc2) == 0.4  );
   }
+
+}
+
+TEST_CASE("run like a simulated 2 speed transport" , "[EstimatorCollection]" ) {
+  int numSource = 500;
+  int numGroups = 2;
+  int minCol = 0; 
+  int maxCol = 12;
+
+  // construct an estimator collection
+  // create a group binning structure
+  Bin_ptr gbin = std::make_shared<GroupBinningStructure>(numGroups); // 2 groups -> 2 bins
+  Bin_ptr nbin = std::make_shared<CollisionOrderBinningStructure>(minCol,maxCol); // bin particles with 5 or 6 collisions
+
+  // create an attribute map with the correct binning structure
+  std::map< ParticleAttribute , Bin_ptr > attributeMap;
+  attributeMap[ ParticleAttribute::group          ] = gbin;
+  attributeMap[ ParticleAttribute::collisionOrder ] = nbin;
+
+  // create an estimator collection of the collison type
+  // with 100 source particles
+  EstimatorCollection e( attributeMap , EstimatorCollection::EstimatorType::Collision , numSource);
+  e.setGeometricDivisor(1.0);
+
+  //manually set up a counter to keep track of the estimator scoring
+  std::vector< vector< std::shared_ptr< Estimator > > > manual;
+
+  std::vector< std::shared_ptr< Estimator > > tmp;
+  for (int i = 1; i <= numGroups; ++i) {
+    for (int j = minCol; j <= maxCol; ++j) {
+      Estimator est;
+      tmp.push_back( std::make_shared<Estimator>(est) );
+    }
+    manual.push_back(tmp);
+    tmp.clear();
+  }
+
+  SECTION("size" , "[EstimatorCollection]") {
+    REQUIRE( numGroups * ( 1 + maxCol - minCol ) == e.getSize() );
+  }
+
+  double multiplier;
+  int groupIndex;
+  int colIndex;
+
+  // iterate through source particles
+  for (int i = 0; i < numSource; ++i) {
+
+    // start a particle at (0,0,0) in group 2 
+    point pt(0,0,0);
+    point dir(0,0,1);
+    Particle particle(pt , dir , 1);
+    std::shared_ptr<Particle> p = std::make_shared<Particle>(particle);
+    
+    while( p->isAlive() ) {
+     
+      // chance of scatter or being absorbed
+      if ( Urand() < 0.9 ) {
+        // score the estimator collection
+        e.score(p , multiplier);
+        
+        // manually score the manual collection with the same multiplier
+        groupIndex = p->getGroup() - 1;
+        colIndex   = p->getNumCollisions() - minCol;
+
+        if (colIndex >= 0 and colIndex < 1 + maxCol - minCol ) {
+          manual.at(groupIndex).at(colIndex)->score(multiplier);
+        }
+       
+        // scatter with 70% chance of downscatter
+        int gf = ( Urand() > 0.3 ? 1 : 2);  
+        p->scatter(gf);
+
+        // make a random multiplier, simulating particle weight
+        multiplier =  Urand();
+      }
+
+      else  {
+        p->kill();
+      }
+
+    } // end particle life
+
+    // end the histories in the collection
+    e.endHist();
+
+    // manually end the histories in the manual tally
+    for ( auto vec : manual ) {
+      for ( auto est : vec ) {
+        est->endHist();
+      }
+    }
+
+  } // end for loop through source queue
+
+  
+  vector <int> indices {0,0};
+  SECTION("compare manual and EstimatorCollection scoring after simulated transport") {
+    for (int i = 0; i < numGroups; ++i) {
+      indices.at(0) = i;
+      for (int j = minCol; j <= maxCol; ++j) {
+        indices.at(1) = j - minCol;
+        REQUIRE( e.checkEstimator(indices)   == manual.at(i).at(j - minCol)->getEstimate( numSource )     );
+        REQUIRE( e.checkUncertainty(indices) == manual.at(i).at(j - minCol)->getUncertainty( numSource ) );
+
+      }
+    }
+  }
+
 
 }

@@ -39,31 +39,6 @@ typedef std::shared_ptr<Particle>                          Part_ptr;
 typedef std::shared_ptr<ParticleAttributeBinningStructure> Bin_ptr;
 
 class EstimatorCollection {
-  private:
-    // a multiplier to normalize an estimate by e.g. volume of a cell/cells or area
-    // of a surface/surfaces
-    double geometricDivisor = 1;
-    
-    // number of Estimators in the collection
-    int    size;
-
-    // the number of bins over each attribute
-    vector <int>  binSizes;
-    
-    // the binning structure for each attribute
-    std::map < ParticleAttribute , Bin_ptr >  attributes;
-
-    // all the estimators in the collection
-    vector   < Estimator_ptr >  estimators;
-    
-    // find index of estimator to score
-    // the second boolean value in the pair is true of the particle has all it's 
-    // attributes within the range of binning structures for this tally
-    int getLinearIndex(Part_ptr p);
-
-    // number of source particles
-    const unsigned long long numHist;
-
   public:
     // Types of Estimators
     // Allows EventHandler to pass in the correct multiplier
@@ -74,7 +49,13 @@ class EstimatorCollection {
       TrackLength    ,
       Collision
     };
+
+    // check if a type is valid
+    bool validType(EstimatorType t);
     
+    EstimatorType getType();
+    
+  private:
     // syntactic sugar for iterating through valid types
     // new types added to EstimatorType must also be added
     // to possibleTypes
@@ -88,10 +69,35 @@ class EstimatorCollection {
     // this holds the type 
     EstimatorType type;
     
-    // functions dealing with EstimatorType
-    EstimatorType getType();
-    bool validType(EstimatorType t);
+    // a multiplier to normalize an estimate by e.g. volume of a cell/cells or area
+    // of a surface/surfaces
+    double geometricDivisor = 1;
+    
+    // number of Estimators in the collection
+    // size = sum_i N_i , where i denotes an attributed the estimator collection is binned over
+    // and N_i is the number of bins in assigned to that attribute
+    // e.g. 2 groups, and 0 through 3 collisions would be size = 2 * 4 = 8
+    int size;
 
+    // the number of bins over each attribute
+    vector <int>  binSizes;
+    
+    // the binning structure for each attribute
+    std::map < ParticleAttribute , Bin_ptr >  attributes;
+
+    // all the estimators in the collection
+    // these are what's actually being scored
+    vector   < Estimator_ptr >  estimators;
+    
+    // find index of estimator to score
+    // the second boolean value in the pair is true of the particle has all it's 
+    // attributes within the range of binning structures for this tally
+    int getLinearIndex(Part_ptr p);
+
+    // number of source particles
+    const unsigned long long numHist;
+
+  public:
     EstimatorCollection(std::map< ParticleAttribute , Bin_ptr > attributesin , EstimatorType t , unsigned long long numHistin);
    ~EstimatorCollection() {};
 
@@ -116,7 +122,7 @@ class EstimatorCollection {
     double checkEstimator(   vector< int > indices );
     double checkUncertainty( vector< int > indices );
     
-    // error handling
+    // error handling - thrown when binningStructure returns an out of range index
     void throwOutOfRange( std::string throwLocation );
   
 };
