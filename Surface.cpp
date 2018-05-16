@@ -74,102 +74,141 @@ point sphere::getNormal(point pt){
 
 //Requires: a valid cylinder
 //Effects: Returns the solution to the equation of the equation at a point
-double cylinder::eval( point p ) {
-  //If along x-axis 
-  if(dir == 'x' || dir == 'X') {
-    //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
-    //Return S;
-    return std::pow(p.y - y0, 2) + std::pow(p.z - z0, 2) - rad*rad;
-  }
-  //If along y-axis 
-  else if(dir == 'y' || dir == 'Y') {
-    //Equ: (x-x0)^2 + (z-z0)^2 - r^2 = s
-    return std::pow(p.x - x0, 2) + std::pow(p.z - z0, 2) - rad*rad;
-  }
-  //If along z-axis 
-  else if(dir == 'z' || dir == 'Z') {
-    //Equ: (x-x0)^2 + (y-y0)^2 - r^2 = s
-    return std::pow(p.x - x0, 2) + std::pow(p.y - y0, 2) - rad*rad;
-  }
-  //Should never get here
-  assert(false);
-  return .666;
+double xCylinder::eval( point p ) {
+  //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  //Return S;
+  return std::pow(p.y - y0, 2) + std::pow(p.z - z0, 2) - rad*rad;
 }
+
+//Requires: a valid cylinder
+//Effects: Returns the solution to the equation of the equation at a point
+double yCylinder::eval( point p ) {
+  //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  //Return S;
+  return std::pow(p.x - x0, 2) + std::pow(p.z - z0, 2) - rad*rad;
+}
+
+//Requires: a valid cylinder
+//Effects: Returns the solution to the equation of the equation at a point
+double zCylinder::eval( point p ) {
+  //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  //Return S;
+  return std::pow(p.x - x0, 2) + std::pow(p.y - y0, 2) - rad*rad;
+}
+
 //Requires: a valid cylinder
 //Effects: returns the distance from the point p on its path u to the surface
-double cylinder::distance (point p, point u ) {
+double xCylinder::distance (point p, point u ) {
   // difference between each coordinate and current point
   point q( p.x - x0, p.y - y0, p.z - z0 );
 
-  //If along x-axis
-  if(dir == 'x' || dir == 'X') {
-    //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  double a = ( std::pow(u.y, 2) + std::pow(u.z,2) );
+  double b = 2.0 * ( q.y * u.y  +  q.z * u.z);
+  double c = eval(p);
 
-    double a = ( std::pow(u.y, 2) + std::pow(u.z,2) );
-    double b = 2.0 * ( q.y * u.y  +  q.z * u.z);
-    double c = eval(p);
-
-    //special case - line on cylinder
-    if(a == 0 && c == 0) {
-      return 0;
-    }
-
-    return Utility::quadSolve(a,b,c);
+  //special case - line on cylinder
+  if(a == 0 && c == 0) {
+    return 0;
   }
-  //If along y-axis
-  else if(dir == 'y' || dir == 'Y') {
-    //Equ: (x-x0)^2 + (z-z0)^2 - r^2 = s
 
-    double a = ( std::pow(u.x, 2) + std::pow(u.z,2) );
-    double b = 2.0 * ( q.x * u.x  +  q.z * u.z);
-    double c = eval(p);
-
-    //special case - line on cylinder
-    if(a == 0 && c == 0) {
-      return 0;
-    }
-
-    return Utility::quadSolve(a,b,c);
-  }
-  //If along z-axis
-  else if(dir == 'z' || dir == 'Z') {
-    //Equ: (x-x0)^2 + (y-y0)^2 - r^2 = s
-
-    double a = ( std::pow(u.x, 2) + std::pow(u.y,2) );
-    double b = 2.0 * ( q.x * u.x  +  q.y * u.y);
-    double c = eval(p);
-
-    //special case - line on cylinder
-    if(a == 0 && c == 0) {
-      return 0;
-    }
-
-    return Utility::quadSolve(a,b,c);
- }
- //Should never get here
- assert(false);
- return .666;
+  return Utility::quadSolve(a,b,c);
 }
+
+//Requires: a valid cylinder
+//Effects: returns the distance from the point p on its path u to the surface
+double yCylinder::distance (point p, point u ) {
+  // difference between each coordinate and current point
+  point q( p.x - x0, p.y - y0, p.z - z0 );
+
+  //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  double a = ( std::pow(u.x, 2) + std::pow(u.z,2) );
+  double b = 2.0 * ( q.x * u.x  +  q.z * u.z);
+  double c = eval(p);
+
+  //special case - line on cylinder
+  if(a == 0 && c == 0) {
+    return 0;
+  }
+
+  return Utility::quadSolve(a,b,c);
+}
+
+
+//Requires: a valid cylinder
+//Effects: returns the distance from the point p on its path u to the surface
+double zCylinder::distance (point p, point u ) {
+  // difference between each coordinate and current point
+  point q( p.x - x0, p.y - y0, p.z - z0 );
+
+  //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
+  double a = ( std::pow(u.x, 2) + std::pow(u.y,2) );
+  double b = 2.0 * ( q.x * u.x  +  q.y * u.y);
+  double c = eval(p);
+
+  //special case - line on cylinder
+  if(a == 0 && c == 0) {
+    return 0;
+  }
+
+  return Utility::quadSolve(a,b,c);
+}
+
 
 //Requires: a valid cylinder
 //Effects: returns the normal vector of the surface at the point or nullptr if
 //point fails to be on the surface
-point  cylinder::getNormal( point p ) {
+point  xCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
   if(Utility::FloatEqual(eval(p),0)) {
     // the gradient vector of the cylinder, general for all orientations
     point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
     
-    //Fix for the axis centered cylinders
-    if(dir == 'x' || dir == 'X'){
-      normal.x = 0;
-    }
-    else if(dir == 'y' || dir == 'Y'){
-      normal.y = 0;
-    }
-    else if(dir == 'z' || dir == 'Z'){
-      normal.z = 0;
-    }
+    normal.x = 0;
+
+    // return the unit normal vector
+    return( normal / std::sqrt(normal * normal) );
+  }
+  else {
+    // if the point is not on the surface, return a null vector
+    // client must check for this condition
+    point p(0 , 0 ,0);
+    return(p);
+  }
+}
+
+//Requires: a valid cylinder
+//Effects: returns the normal vector of the surface at the point or nullptr if
+//point fails to be on the surface
+point  yCylinder::getNormal( point p ) {
+  // check if the crossing point is on the surface
+  if(Utility::FloatEqual(eval(p),0)) {
+    // the gradient vector of the cylinder, general for all orientations
+    point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
+    
+    normal.y = 0;
+
+    // return the unit normal vector
+    return( normal / std::sqrt(normal * normal) );
+  }
+  else {
+    // if the point is not on the surface, return a null vector
+    // client must check for this condition
+    point p(0 , 0 ,0);
+    return(p);
+  }
+}
+
+//Requires: a valid cylinder
+//Effects: returns the normal vector of the surface at the point or nullptr if
+//point fails to be on the surface
+point  zCylinder::getNormal( point p ) {
+  // check if the crossing point is on the surface
+  if(Utility::FloatEqual(eval(p),0)) {
+    // the gradient vector of the cylinder, general for all orientations
+    point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
+    
+    normal.z = 0;
 
     // return the unit normal vector
     return( normal / std::sqrt(normal * normal) );
