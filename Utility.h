@@ -74,7 +74,10 @@ namespace Utility {
                        
   // determinant of 3x3 matrix [ row1 ; row2 ; row3 ]
   double threeDeterminant(const vector< double >& v1, const vector< double >& v2, const vector< double >& v3);
-  
+
+  //Determnant of a 2X2 matrix [row1 ; row2 ]
+  double twoDeterminant(const vector< double >& v1, const vector<double >& v2);
+
   // given point [p1 , p2 , p3 ] , returns a vector<double> [ p1 , p2 , p3 , 1.0 ] 
   std::vector< double > pointFourVec( point pos );
 

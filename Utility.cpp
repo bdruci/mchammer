@@ -25,6 +25,13 @@ double Utility::threeDeterminant(const vector< double >& v1, const vector< doubl
     return det;
 }
 
+//Requires: two vectors of two elements
+//Effects: Returns the determinant of the two 
+double Utility::twoDeterminant(const vector<double >& v1, const vector<double >& v2){
+  return (v1[0] * v2[1]) - (v1[1] * v2[0]);
+}
+
+
 std::vector< double > Utility::pointFourVec( point pos )
 {
     // Takes a point and returns a vector (length 4) with a "1.0" appended

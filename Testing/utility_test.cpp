@@ -113,4 +113,16 @@ TEST_CASE( "Utility", "[utility]" ) {
     REQUIRE( !Utility::FloatEqual(CornerNegHalf, 1));
     REQUIRE( !Utility::FloatEqual(TooOff, 1));
   }
+
+  /* ****************************************************************************************************** * 
+ * Fast Matrix Operations
+ *   Functions for calculating determinants of double-typed matrices
+ * ****************************************************************************************************** */ 
+  //Test two by two determinant
+  SECTION ( " Test 2x2 determinant " ) {
+    vector<double> v1 = { 2, 3 };
+    vector<double> v2 = { 4, 5 };
+    REQUIRE( Utility::twoDeterminant(v1, v2) == -2);
+  }
+
 }
