@@ -160,7 +160,7 @@ double zCylinder::distance (point p, point u ) {
 //point fails to be on the surface
 point  xCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
-  if(Utility::FloatEqual(eval(p),0)) {
+  if(Utility::FloatZero(eval(p))) {
     // the gradient vector of the cylinder, general for all orientations
     point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
     
@@ -182,7 +182,7 @@ point  xCylinder::getNormal( point p ) {
 //point fails to be on the surface
 point  yCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
-  if(Utility::FloatEqual(eval(p),0)) {
+  if(Utility::FloatZero(eval(p))) {
     // the gradient vector of the cylinder, general for all orientations
     point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
     
@@ -204,7 +204,7 @@ point  yCylinder::getNormal( point p ) {
 //point fails to be on the surface
 point  zCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
-  if(Utility::FloatEqual(eval(p),0)) {
+  if(Utility::FloatZero(eval(p))) {
     // the gradient vector of the cylinder, general for all orientations
     point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
     

@@ -174,13 +174,11 @@ namespace Utility {
   int linearizeIndices( std::vector<int> indices , std::vector<int> binSizes );
 
   //Effects: Checks to see if the two numbers passed are within a range of each other
-  //the range is passed by the user as a multiple of the numeric limits epsilon
-  //(recommended range for tolerance is 100-1000)
-  bool FloatEqual(double lhs, double rhs, int tolerance);
+  //the range is passed by the user as a percentage of larger number
+  bool FloatEqual(double lhs, double rhs, double tolerance);
 
-  //Overloaded FloatEqual with no tolerance passed so it is assumed to be 1,000 times 
-  //numeric limits epsilon
-  bool FloatEqual(double lhs, double rhs);
+  //Effects: checks to see if the float is appromixately zero
+  bool FloatZero(double f);
 
 };
 #endif

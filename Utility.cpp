@@ -125,39 +125,20 @@ int Utility::linearizeIndices( std::vector<int> indices , std::vector<int> binSi
 }
 
 //Requires: Two double numbers and a positive, non-zero int tolerance to compare the two - 
-bool Utility::FloatEqual(double lhs, double rhs, int tolerance){
+bool Utility::FloatEqual(double a, double b, double tolerance){
   assert(tolerance > 0);
-  //Initialize outside of conditionals
-  double diff = 1;
-  double tol = std::numeric_limits<double>::epsilon() * tolerance;
 
-  if(lhs == rhs){
-    return true;
-  }
-  //Weird corner case - the difference of the absolute value of the input is
-  //within the tolerance but one number is negative
-  //Still have to check if the numbers are inside acceptable
-  //Range that happens to comtain zero
-  else if((lhs * rhs) < 0){
-    lhs = std::abs(lhs);
-    rhs = std::abs(rhs);
-    diff = lhs + rhs;
-  }
-  else if(lhs > rhs){
-    diff = lhs - rhs;
+  if(a*b < 0){
+    return false;
   }
   else{
-    diff = rhs - lhs;
+    return fabs(a - b) <= (( fabs(a) < fabs(b) ? fabs(b) : fabs(a) )*tolerance );
   }
-
-  if(diff < tol){
-    return true;
-  }
-  return false;
 }
 
-bool Utility::FloatEqual(double lhs, double rhs){
-  return FloatEqual(lhs, rhs, 1000);
+//Effects: Checks to see that the number is about zero
+bool Utility::FloatZero(double a){
+  return fabs(a) < (500 * std::numeric_limits<double>::epsilon());
 }
 
 /* ****************************************************************************************************** * 
