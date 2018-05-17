@@ -4,6 +4,7 @@
  */
 
 #include "Input.h"
+#include <set>
 
 void Input::readInput( std::string xmlFilename ) {
 
@@ -75,7 +76,7 @@ void Input::readInput( std::string xmlFilename ) {
             std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
             throw;
           }
-          if ( captureXS.size() != nGroups )
+          if ( captureXS.size() != (unsigned)nGroups )
           {
             std::cout << " the number of elements in the capture xs vector for nuclide " 
                       << name << " does not equal nGroups." << std::endl;
@@ -94,29 +95,59 @@ void Input::readInput( std::string xmlFilename ) {
       {
         std::vector< double > tempXSVec;
         std::vector< std::vector< double > > scatterXS;
+        //Make a set (unique elements are enforced) and make sure it is empty
+        //Set an int counter to follow the set
+        std::set<int> GroupCounter;
+        GroupCounter.clear();
 
         for ( pugi::xml_node groupXS : r.children() )
         {
           std::string dataType = groupXS.name();
           if ( dataType == "xs" )
           {
+            //Make sure that a group and values are passed
             pugi::xml_attribute xsList = groupXS.attribute("value");
+            pugi::xml_attribute xsGroupNumber = groupXS.attribute("incident_group");
+            //Set the number of groups passed counter to size of unique container
+            int currentNumGroups = GroupCounter.size();
+
             if ( xsList )
             {
-              std::istringstream inString( xsList.value() );
-              while ( inString >> tempXS ) { tempXSVec.push_back( tempXS ); }
+              if(xsGroupNumber){
+                std::istringstream inString( xsList.value() );
+                while ( inString >> tempXS ) { tempXSVec.push_back( tempXS ); }
+              }
+              else{
+                std::cout << " unknown incident group for scatter xs vector in nuclide " << name << std::endl;
+                //throw;
+              }
             }
             else
             {
               std::cout << " unknown attribute type for scatter xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( tempXSVec.size() != nGroups )
+            //Make sure the correct number of xs's are passed in the value
+            if ( tempXSVec.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the capture xs vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
               throw;
             }
+            //Check that the group number is within range
+            if(xsGroupNumber.as_double() > (unsigned)nGroups || xsGroupNumber.as_double() <= 0){
+              std::cout << " the incident group number for nuclide " 
+                        << name << " is outside of range." << std::endl;
+              throw;
+            }
+            //Check that the group number is unique
+            GroupCounter.insert(xsGroupNumber.as_double());
+            if((unsigned)currentNumGroups == GroupCounter.size()){
+              std::cout << " the incident group number for nuclide " 
+                        << name << " is repeated." << std::endl;
+              throw;
+            }
+
             scatterXS.push_back( tempXSVec );
             tempXSVec.clear();
           }
@@ -126,7 +157,7 @@ void Input::readInput( std::string xmlFilename ) {
             throw;
           }
         }
-        if ( scatterXS.size() != nGroups )
+        if ( scatterXS.size() != (unsigned)nGroups )
         {
           std::cout << " the number of elements in the scatter xs vector for nuclide " 
                     << name << " does not equal nGroups." << std::endl;
@@ -154,7 +185,7 @@ void Input::readInput( std::string xmlFilename ) {
               std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( fissionXS.size() != nGroups )
+            if ( fissionXS.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the fission xs vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
@@ -174,7 +205,7 @@ void Input::readInput( std::string xmlFilename ) {
               std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( nuXS.size() != nGroups )
+            if ( nuXS.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the nu vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
@@ -194,7 +225,7 @@ void Input::readInput( std::string xmlFilename ) {
               std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( chiXS.size() != nGroups )
+            if ( chiXS.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the chi vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
