@@ -21,10 +21,6 @@ public:
     ~surface() {};
 
     
-    // Estimator sets/gets
-    void addEstimator( EstCol_ptr newEstimator);
-    std::vector< EstCol_ptr > getEstimators() { return estimators; };
-    
     virtual std::string name() { return surface_name; };
     
     // returns a normal vector given a point on the surface
@@ -33,10 +29,9 @@ public:
     virtual double eval( point p )              = 0;
     virtual double distance( point p, point u ) = 0;
     
-    // Estimator interface
-    void scoreTally(Part_ptr p , double xs); 
-    void endTallyHist();
-    // TODO get Tally output
+    // estimator interface
+    void addEstimator( EstCol_ptr newEstimator );
+    std::vector< EstCol_ptr > getEstimators() { return estimators; };
 };
 
 class plane : public surface {

@@ -3,19 +3,6 @@
 
 #include "Surface.h"
 
-void surface::scoreTally(Part_ptr p , double xs) {
-  // for each EstimatorCollection
-    // for each attribute
-      // get the index of the Estimator to score
-      // score the estimator
-};
-
-void surface::endTallyHist() {
-    for(auto est : estimators) {
-        est->endHist();
-    }
-};
-
 double plane::eval( point p ) {
     return a * p.x  +  b * p.y  +  c * p.z  - d;
 }

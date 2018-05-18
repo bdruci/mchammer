@@ -7,6 +7,7 @@
 typedef std::shared_ptr<Transport>   T_ptr;
 typedef std::shared_ptr<Mesh>        Mesh_ptr;
 typedef std::shared_ptr<HammerTime>  Time_ptr;
+typedef std::shared_ptr< EstimatorCollection >  EstCol_ptr;
 
 int main(int argc , char *argv[]) 
 //INPUT: xmlFilename
@@ -28,12 +29,13 @@ int main(int argc , char *argv[])
     input->readInput( xmlFilename );
 
     // Create pointers to geometry, constants, and mesh
-    std::shared_ptr< Geometry >   geometry  = input->getGeometry();
-    std::shared_ptr< Constants >  constants = input->getConstants();
-    std::shared_ptr< Mesh >       mesh      = input->getMesh();
-    std::shared_ptr< HammerTime > timer     = input->getTimer();
+    std::shared_ptr< Geometry   >  geometry   = input->getGeometry();
+    std::shared_ptr< Constants  >  constants  = input->getConstants();
+    std::shared_ptr< Mesh       >  mesh       = input->getMesh();
+    std::shared_ptr< HammerTime >  timer      = input->getTimer();
+    vector < EstCol_ptr >          estimators = input->getEstimators();  
   
-    T_ptr t = std::make_shared<Transport>( geometry, constants, mesh, timer );
+    T_ptr t = std::make_shared<Transport>( geometry, constants, mesh, timer , estimators);
 
     cout << "running transport..." << endl;
     t->runTransport();

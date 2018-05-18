@@ -64,7 +64,7 @@ public:
     
     bool amIHere( const std::vector< double >& testPoint );
     
-    // esitmator interface 
+    // estimator interface 
     void addEstimator( EstCol_ptr newEstimator );
     vector < EstCol_ptr > getEstimators() { return(estimators); };
 };

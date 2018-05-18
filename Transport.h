@@ -63,7 +63,7 @@ private:
     
 public:
     //constructor
-    Transport( Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein);
+    Transport( Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein, vector< EstCol_ptr > estimatorsin );
    ~Transport() {}; 
         //to be altered once input is added
     
@@ -73,7 +73,6 @@ public:
     void output();
     
     // Estimator interface
-    void addEstimator( EstCol_ptr newEstimator) { estimators.push_back(newEstimator); };
     void endHist(); 
 };
 

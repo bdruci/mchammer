@@ -9,13 +9,15 @@
 using std::make_shared;
 
 void Transport::endHist() {
+  // end history for all estimators in the problem
   for (auto est : estimators) {
     est->endHist();
   }
 }
 
 //constructor
-Transport::Transport(Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein): geometry(geoin) , constants(consti), mesh(meshin) , timer(timein) {}
+Transport::Transport(Geom_ptr geoin, Cons_ptr consti, Mesh_ptr meshin , Time_ptr timein, vector < EstCol_ptr > estimatorsin ): geometry(geoin) , constants(consti), 
+  mesh(meshin) , timer(timein) ,  estimators(estimatorsin) {}
  
 void Transport::runTransport()
 {
@@ -54,12 +56,12 @@ void Transport::runTransport()
                     point oldPos = p->getPos();
                     p->move(d2c);
 
-                    // handle estimators
+                    // handle estimators 
                     timer->startTimer("handling estimators at collision");
                     collisionHandler.setCurrentCell(current_Cell);
                     collisionHandler.setCurrentTet( mesh->whereAmI( p->getPos() ) );
                     collisionHandler.score( std::make_shared<point>(oldPos) , p );  
-                    timer->endTimer("handling estimators at collision");
+                    timer->endTimer("handling estimators at collision"); 
 
 
                     // sample the reaction

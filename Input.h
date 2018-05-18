@@ -41,15 +41,20 @@ class Input
     bool                          loud;
     int                           nHist;
     int                           nGroups;
+    
+    // holds a pointer to every estimator in the problem to pass to input
+    vector< EstCol_ptr >          estimators;
 
   public:
     Input() {};
    ~Input() {};    
-    void readInput( std::string xmlFilename );    
-    std::shared_ptr< Geometry >   getGeometry()  { return geometry;  };
-    std::shared_ptr< Mesh >       getMesh()      { return mesh;      };
-    std::shared_ptr< Constants >  getConstants() { return constants; };
-    std::shared_ptr< HammerTime > getTimer()     { return timer;     };
+    void readInput( std::string xmlFilename );  
+
+    std::shared_ptr< Geometry >   getGeometry()   { return geometry;   };
+    std::shared_ptr< Mesh >       getMesh()       { return mesh;       };
+    std::shared_ptr< Constants >  getConstants()  { return constants;  };
+    std::shared_ptr< HammerTime > getTimer()      { return timer;      };
+    vector< EstCol_ptr >          getEstimators() { return estimators; };
 };
 
 template< typename T >

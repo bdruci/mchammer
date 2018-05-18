@@ -55,11 +55,9 @@ public:
   void    addSurfacePair ( std::pair< Surf_ptr, bool > newSurfacePair ) { surfacePairs.push_back( newSurfacePair ); };
   void    setMaterial    ( Mat_ptr newMaterial                        ) { mat = newMaterial;                        };
   
-  void    addEstimator   ( EstCol_ptr newEstimator );
 
   Mat_ptr                   getMat()        { return mat;        };
   std::string               name()          { return cellName;   };
-  std::vector< EstCol_ptr > getEstimators() { return estimators; };
   
   //operations
   double                 distToSurface   ( Part_ptr pi );
@@ -68,6 +66,10 @@ public:
   Surf_ptr getClosestSurface( Part_ptr pi);
   
   bool amIHere( const point& pos );
+  
+  // estimator interface
+  void addEstimator( EstCol_ptr newEstimator );
+  std::vector< EstCol_ptr > getEstimators() { return estimators; };
 
 };
 #endif 
