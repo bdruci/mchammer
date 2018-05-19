@@ -4,12 +4,10 @@
 #include <iostream>
 
 #include "Catch.h"
-#include "Utility.h"
+#include "../Utility.h"
 
 
 TEST_CASE( "Utility", "[utility]" ) {
-
-
 
 /* ****************************************************************************************************** * 
  * Generic Vector and Point Operations
@@ -56,6 +54,7 @@ TEST_CASE( "Utility", "[utility]" ) {
  * Miscellaneous                      
  *
  * ****************************************************************************************************** */ 
+TEST_CASE("Miscellaneous " ,"[utility]" ) {
 
   //Test FloatEqual for true (simple)
   SECTION ( " Test FloatEqual for true (simple) " ) {
@@ -96,6 +95,9 @@ TEST_CASE( "Utility", "[utility]" ) {
     REQUIRE( Utility::FloatZero(std::numeric_limits<double>::epsilon() *-499));
   }
 
+}
+
+TEST_CASE("Fast Matrix Ops " , "[utility]" ) {
   /* ****************************************************************************************************** * 
  * Fast Matrix Operations
  *   Functions for calculating determinants of double-typed matrices
@@ -106,6 +108,7 @@ TEST_CASE( "Utility", "[utility]" ) {
     vector<double> v2 = { 4, 5 };
     REQUIRE( Utility::twoDeterminant(v1, v2) == -2);
   }
+}
 
 TEST_CASE( "linearizeIndices" , "[Utility]") {
   
