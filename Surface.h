@@ -66,10 +66,10 @@ public:
 //Currently only takes cylinders along a x/y/z axis
 class xCylinder : public surface {
 private:
-    double x0, y0, z0, rad;
+    double y0, z0, rad;
 public:
-    xCylinder( std::string label, double x_in, double y_in, double z_in, double rad_in)
-            : surface(label), x0(x_in), y0(y_in), z0(z_in), rad(rad_in) { 
+    xCylinder( std::string label, double y_in, double z_in, double rad_in)
+            : surface(label), y0(y_in), z0(z_in), rad(rad_in) { 
         assert(rad > 0);
     };
     ~xCylinder() {};
@@ -81,10 +81,10 @@ public:
 
 class yCylinder : public surface {
 private:
-    double x0, y0, z0, rad;
+    double x0, z0, rad;
 public:
-    yCylinder( std::string label, double x_in, double y_in, double z_in, double rad_in)
-            : surface(label), x0(x_in), y0(y_in), z0(z_in), rad(rad_in) { 
+    yCylinder( std::string label, double x_in, double z_in, double rad_in)
+            : surface(label), x0(x_in), z0(z_in), rad(rad_in) { 
         assert(rad > 0);
     };
     ~yCylinder() {};
@@ -96,10 +96,10 @@ public:
 
 class zCylinder : public surface {
 private:
-    double x0, y0, z0, rad;
+    double x0, y0, rad;
 public:
-    zCylinder( std::string label, double x_in, double y_in, double z_in, double rad_in)
-            : surface(label), x0(x_in), y0(y_in), z0(z_in), rad(rad_in) { 
+    zCylinder( std::string label, double x_in, double y_in, double rad_in)
+            : surface(label), x0(x_in), y0(y_in), rad(rad_in) { 
         assert(rad > 0);
     };
     ~zCylinder() {};

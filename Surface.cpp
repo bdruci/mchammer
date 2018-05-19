@@ -100,7 +100,7 @@ double zCylinder::eval( point p ) {
 //Effects: returns the distance from the point p on its path u to the surface
 double xCylinder::distance (point p, point u ) {
   // difference between each coordinate and current point
-  point q( p.x - x0, p.y - y0, p.z - z0 );
+  point q( 0, p.y - y0, p.z - z0 );
 
   //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
   double a = ( std::pow(u.y, 2) + std::pow(u.z,2) );
@@ -119,7 +119,7 @@ double xCylinder::distance (point p, point u ) {
 //Effects: returns the distance from the point p on its path u to the surface
 double yCylinder::distance (point p, point u ) {
   // difference between each coordinate and current point
-  point q( p.x - x0, p.y - y0, p.z - z0 );
+  point q( p.x - x0, 0, p.z - z0 );
 
   //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
   double a = ( std::pow(u.x, 2) + std::pow(u.z,2) );
@@ -139,7 +139,7 @@ double yCylinder::distance (point p, point u ) {
 //Effects: returns the distance from the point p on its path u to the surface
 double zCylinder::distance (point p, point u ) {
   // difference between each coordinate and current point
-  point q( p.x - x0, p.y - y0, p.z - z0 );
+  point q( p.x - x0, p.y - y0, 0 );
 
   //Equ: (y-y0)^2 + (z-z0)^2 - r^2 = s
   double a = ( std::pow(u.x, 2) + std::pow(u.y,2) );
@@ -162,9 +162,7 @@ point  xCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
   if(Utility::FloatZero(eval(p))) {
     // the gradient vector of the cylinder, general for all orientations
-    point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
-    
-    normal.x = 0;
+    point normal( 0, 2.0*(p.y - y0), 2.0*(p.z - z0) );
 
     // return the unit normal vector
     return( normal / std::sqrt(normal * normal) );
@@ -184,9 +182,7 @@ point  yCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
   if(Utility::FloatZero(eval(p))) {
     // the gradient vector of the cylinder, general for all orientations
-    point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
-    
-    normal.y = 0;
+    point normal( 2.0*(p.x - x0), 0, 2.0*(p.z - z0) );
 
     // return the unit normal vector
     return( normal / std::sqrt(normal * normal) );
@@ -206,9 +202,7 @@ point  zCylinder::getNormal( point p ) {
   // check if the crossing point is on the surface
   if(Utility::FloatZero(eval(p))) {
     // the gradient vector of the cylinder, general for all orientations
-    point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 2.0*(p.z - z0) );
-    
-    normal.z = 0;
+    point normal( 2.0*(p.x - x0), 2.0*(p.y - y0), 0 );
 
     // return the unit normal vector
     return( normal / std::sqrt(normal * normal) );

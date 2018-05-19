@@ -15,9 +15,9 @@ TEST_CASE( "Cylinder", "[cylinder]" ) {
 
     std::string name = "SimpleXCyl";
 
-    xCylinder SimpleXCyl( name, x0, y0, z0, rad);
-    yCylinder SimpleYCyl( name, x0, y0, z0, rad);
-    zCylinder SimpleZCyl( name, x0, y0, z0, rad);
+    xCylinder SimpleXCyl( name, y0, z0, rad);
+    yCylinder SimpleYCyl( name, x0, z0, rad);
+    zCylinder SimpleZCyl( name, x0, y0, rad);
 
     // test returns appropriate name
     SECTION ( " return surface name " ) {
@@ -159,10 +159,9 @@ TEST_CASE( "Cylinder", "[cylinder]" ) {
     //IDK hown to get around it so this test case will always fail
     x0 = 0;
     y0 = 0;
-    z0 = 0;
     rad = 1;
     std::string n = "forNorm";
-    zCylinder forNorm( n, x0, y0, z0, rad );
+    zCylinder forNorm( n, x0, y0, rad );
 
     SECTION ( " normal vec of cylinder " ) {
 
