@@ -35,7 +35,10 @@ namespace Utility {
                        
   // determinant of 3x3 matrix [ row1 ; row2 ; row3 ]
   double threeDeterminant(const vector< double >& v1, const vector< double >& v2, const vector< double >& v3);
-  
+
+  //Determnant of a 2X2 matrix [row1 ; row2 ]
+  double twoDeterminant(const vector< double >& v1, const vector<double >& v2);
+
   // given point [p1 , p2 , p3 ] , returns a vector<double> [ p1 , p2 , p3 , 1.0 ] 
   std::vector< double > pointFourVec( point pos );
 
@@ -130,6 +133,13 @@ namespace Utility {
   // translates n-dimensional indices on an n-dimensional array to a scalar index on an unraveled array 
   // holding the same values 
   int linearizeIndices( std::vector<int> indices , std::vector<int> binSizes );
+
+  //Effects: Checks to see if the two numbers passed are within a range of each other
+  //the range is passed by the user as a percentage of larger number
+  bool FloatEqual(double lhs, double rhs, double tolerance);
+
+  //Effects: checks to see if the float is appromixately zero
+  bool FloatZero(double f);
 
 };
 #endif
