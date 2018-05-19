@@ -274,6 +274,22 @@ void Input::readInput( std::string xmlFilename ) {
       double rad = s.attribute("rad").as_double();
       S = std::make_shared< sphere > ( name, x0, y0, z0, rad );
     }
+    else if ( type == "cylinder" ) {
+      double x0 = s.attribute("x0").as_double();
+      double y0 = s.attribute("y0").as_double();
+      double z0 = s.attribute("z0").as_double();
+      double rad = s.attribute("rad").as_double();
+      std::string dir = s.attribute("dir").value();
+      if(dir == "x" || dir == "X"){
+        S = std::make_shared< xCylinder > ( name, x0, y0, z0, rad );
+      }
+      else if(dir == "y" || dir == "Y"){
+        S = std::make_shared< yCylinder > ( name, x0, y0, z0, rad );
+      }
+      else if(dir == "z" || dir == "Z"){
+        S = std::make_shared< zCylinder > ( name, x0, y0, z0, rad );
+      }
+    }
     else {
       std::cout << " unkown surface type " << type << std::endl;
       throw;

@@ -25,6 +25,13 @@ double Utility::threeDeterminant(const vector< double >& v1, const vector< doubl
     return det;
 }
 
+//Requires: two vectors of two elements
+//Effects: Returns the determinant of the two 
+double Utility::twoDeterminant(const vector<double >& v1, const vector<double >& v2){
+  return (v1[0] * v2[1]) - (v1[1] * v2[0]);
+}
+
+
 std::vector< double > Utility::pointFourVec( point pos )
 {
     // Takes a point and returns a vector (length 4) with a "1.0" appended
@@ -115,6 +122,23 @@ int Utility::linearizeIndices( std::vector<int> indices , std::vector<int> binSi
   }
 
   return(n);
+}
+
+//Requires: Two double numbers and a positive, non-zero int tolerance to compare the two - 
+bool Utility::FloatEqual(double a, double b, double tolerance){
+  assert(tolerance > 0);
+
+  if(a*b < 0){
+    return false;
+  }
+  else{
+    return fabs(a - b) <= (( fabs(a) < fabs(b) ? fabs(b) : fabs(a) )*tolerance );
+  }
+}
+
+//Effects: Checks to see that the number is about zero
+bool Utility::FloatZero(double a){
+  return fabs(a) < (500 * std::numeric_limits<double>::epsilon());
 }
 
 /* ****************************************************************************************************** * 
