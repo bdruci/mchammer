@@ -58,9 +58,27 @@ bool EstimatorCollection::validType( EstimatorCollection::EstimatorType t ) {
   return(valid);
 }
 
+
 EstimatorCollection::EstimatorType EstimatorCollection::getType() {
   return(type);
 };
+
+std::string EstimatorCollection::getStrType() {
+  switch (type) {
+    case EstimatorType::SurfaceCurrent:
+      return("Surface Current");
+      break;
+    case EstimatorType::SurfaceFluence:
+      return("Surface Fluence");
+      break;
+    case EstimatorType::TrackLength:
+      return("Track Length");
+      break;
+    case EstimatorType::Collision:
+      return("Collision");
+      break;
+  }
+}
 
 void EstimatorCollection::endHist() {
   for(auto estimator : estimators) {
@@ -68,6 +86,8 @@ void EstimatorCollection::endHist() {
   }
 };
 
+
+// return unraveled linear index of n-dimensional histogram binning structure
 int EstimatorCollection::getLinearIndex(Part_ptr p ) {
   vector<int> indices;
   for(auto const& attribute : attributes) {
@@ -85,6 +105,7 @@ int EstimatorCollection::getLinearIndex(Part_ptr p ) {
   return( Utility::linearizeIndices( indices ,  binSizes ) );
 };
 
+// score an estimator
 void EstimatorCollection::score(Part_ptr p  , double multiplier) {
   int i =  getLinearIndex(p);
   if( i >= 0  ) { 
@@ -94,6 +115,8 @@ void EstimatorCollection::score(Part_ptr p  , double multiplier) {
   }
 }
 
+// sets the divisor (e.g. cell or cell union volume, surface or surface union area)
+// used to normalize estimators
 void EstimatorCollection::setGeometricDivisor(double div) {
     if ( type == EstimatorType::SurfaceCurrent) {
       // there is no geometric divisor for surface current - it is literally a count of the number of particles 
@@ -107,6 +130,7 @@ void EstimatorCollection::setGeometricDivisor(double div) {
     }
 }
 
+// generic out of range throw for checkEstimator and checkUncertainty
 void EstimatorCollection::throwOutOfRange(std::string str) {
     std::cerr << "Error in EstimatorCollection::" << str         << std::endl
               << "Attempted to access an out of range Estimator" << std::endl;

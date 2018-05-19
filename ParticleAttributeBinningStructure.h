@@ -17,6 +17,7 @@
 #include <utility>
 #include <iostream>
 #include <cassert>
+#include <map>
 
 #include "Particle.h"
 #include "BinningStructure.h"
@@ -31,6 +32,7 @@ enum class ParticleAttribute {
   collisionOrder , 
   angle
 };
+
 
 class ParticleAttributeBinningStructure {
   protected:

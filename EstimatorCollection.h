@@ -54,6 +54,7 @@ class EstimatorCollection {
     bool validType(EstimatorType t);
     
     EstimatorType getType();
+    std::string   getStrType();
     
   private:
     // syntactic sugar for iterating through valid types

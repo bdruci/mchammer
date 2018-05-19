@@ -13,6 +13,18 @@
 
 #include "ParticleAttributeBinningStructure.h"
 
+// operator overload for ParticleAttribute for ostream
+std::ostream& operator<<(std::ostream& out, const ParticleAttribute attr){  
+  // map from ParticleAttribute to string
+  std::map < ParticleAttribute , std::string > particleAttributeToString;
+  if ( particleAttributeToString.size() == 0 ) {
+    particleAttributeToString[ParticleAttribute::group          ] = "energy group";
+    particleAttributeToString[ParticleAttribute::collisionOrder ] = "collision order";
+    particleAttributeToString[ParticleAttribute::angle          ] = "angle";
+  }
+  return out << particleAttributeToString[attr];
+};
+
 /* Integer Particle Attributes */
 
 int GroupBinningStructure::getIndex( Part_ptr p ) {
