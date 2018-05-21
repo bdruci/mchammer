@@ -4,6 +4,7 @@
  */
 
 #include "Input.h"
+#include <set>
 
 void Input::readInput( std::string xmlFilename ) {
 
@@ -84,7 +85,7 @@ void Input::readInput( std::string xmlFilename ) {
             std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
             throw;
           }
-          if ( captureXS.size() != nGroups )
+          if ( captureXS.size() != (unsigned)nGroups )
           {
             std::cout << " the number of elements in the capture xs vector for nuclide " 
                       << name << " does not equal nGroups." << std::endl;
@@ -107,29 +108,59 @@ void Input::readInput( std::string xmlFilename ) {
       {
         std::vector< double > tempXSVec;
         std::vector< std::vector< double > > scatterXS;
+        //Make a set (unique elements are enforced) and make sure it is empty
+        //Set an int counter to follow the set
+        std::set<int> GroupCounter;
+        GroupCounter.clear();
 
         for ( pugi::xml_node groupXS : r.children() )
         {
           std::string dataType = groupXS.name();
           if ( dataType == "xs" )
           {
+            //Make sure that a group and values are passed
             pugi::xml_attribute xsList = groupXS.attribute("value");
+            pugi::xml_attribute xsGroupNumber = groupXS.attribute("incident_group");
+            //Set the number of groups passed counter to size of unique container
+            int currentNumGroups = GroupCounter.size();
+
             if ( xsList )
             {
-              std::istringstream inString( xsList.value() );
-              while ( inString >> tempXS ) { tempXSVec.push_back( tempXS ); }
+              if(xsGroupNumber){
+                std::istringstream inString( xsList.value() );
+                while ( inString >> tempXS ) { tempXSVec.push_back( tempXS ); }
+              }
+              else{
+                std::cout << " unknown incident group for scatter xs vector in nuclide " << name << std::endl;
+                //throw;
+              }
             }
             else
             {
               std::cout << " unknown attribute type for scatter xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( tempXSVec.size() != nGroups )
+            //Make sure the correct number of xs's are passed in the value
+            if ( tempXSVec.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the capture xs vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
               throw;
             }
+            //Check that the group number is within range
+            if(xsGroupNumber.as_double() > (unsigned)nGroups || xsGroupNumber.as_double() <= 0){
+              std::cout << " the incident group number for nuclide " 
+                        << name << " is outside of range." << std::endl;
+              throw;
+            }
+            //Check that the group number is unique
+            GroupCounter.insert(xsGroupNumber.as_double());
+            if((unsigned)currentNumGroups == GroupCounter.size()){
+              std::cout << " the incident group number for nuclide " 
+                        << name << " is repeated." << std::endl;
+              throw;
+            }
+
             scatterXS.push_back( tempXSVec );
             tempXSVec.clear();
           }
@@ -139,7 +170,7 @@ void Input::readInput( std::string xmlFilename ) {
             throw;
           }
         }
-        if ( scatterXS.size() != nGroups )
+        if ( scatterXS.size() != (unsigned)nGroups )
         {
           std::cout << " the number of elements in the scatter xs vector for nuclide " 
                     << name << " does not equal nGroups." << std::endl;
@@ -172,7 +203,7 @@ void Input::readInput( std::string xmlFilename ) {
               std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( fissionXS.size() != nGroups )
+            if ( fissionXS.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the fission xs vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
@@ -192,7 +223,7 @@ void Input::readInput( std::string xmlFilename ) {
               std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( nuXS.size() != nGroups )
+            if ( nuXS.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the nu vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
@@ -212,7 +243,7 @@ void Input::readInput( std::string xmlFilename ) {
               std::cout << " unknown attribute type for caputre xs vector in nuclide " << name << std::endl;
               throw;
             }
-            if ( chiXS.size() != nGroups )
+            if ( chiXS.size() != (unsigned)nGroups )
             {
               std::cout << " the number of elements in the chi vector for nuclide " 
                         << name << " does not equal nGroups." << std::endl;
@@ -314,13 +345,13 @@ void Input::readInput( std::string xmlFilename ) {
       double rad = s.attribute("rad").as_double();
       std::string dir = s.attribute("dir").value();
       if(dir == "x" || dir == "X"){
-        S = std::make_shared< xCylinder > ( name, x0, y0, z0, rad );
+        S = std::make_shared< xCylinder > ( name, y0, z0, rad );
       }
       else if(dir == "y" || dir == "Y"){
-        S = std::make_shared< yCylinder > ( name, x0, y0, z0, rad );
+        S = std::make_shared< yCylinder > ( name, x0, z0, rad );
       }
       else if(dir == "z" || dir == "Z"){
-        S = std::make_shared< zCylinder > ( name, x0, y0, z0, rad );
+        S = std::make_shared< zCylinder > ( name, x0, y0, rad );
       }
     }
     else {
@@ -606,6 +637,108 @@ void Input::readInput( std::string xmlFilename ) {
         throw;
       }
     }
+        else if( type == "setSourceAnnulus" ) {
+      pugi::xml_attribute X0   = so.attribute("xSource");
+      pugi::xml_attribute Y0   = so.attribute("ySource");
+      pugi::xml_attribute Z0   = so.attribute("zSource");
+      pugi::xml_attribute Height = so.attribute("height");
+      pugi::xml_attribute Axis = so.attribute("axis");
+      pugi::xml_attribute Radi = so.attribute("radInner");
+      pugi::xml_attribute Rado = so.attribute("radOuter");
+      std::string dist = so.attribute("distribution").value();
+
+      //Check attributes passed
+      if(!X0 || !Y0 || !Z0 || !Height || !Axis || !Radi || !Rado || Radi.as_double() < 0
+         || Rado.as_double() < 0 || Radi.as_double() > Rado.as_double() || Height.as_double() < 0) {
+        std::cout << " source setSourceCylinder " << name << " initialized incorrectly" << std::endl;
+        throw;
+      }
+
+      double x0   = X0.as_double();
+      double y0   = Y0.as_double();
+      double z0   = Z0.as_double();
+      double height = Height.as_double();
+      std::string axis = Axis.value();
+      double radi = Radi.as_double();
+      double rado = Rado.as_double();
+
+      if ( dist == "hardcoded" ) {
+        // all neutrons come from the first group
+        std::vector< double > sourceGroups;
+        sourceGroups.push_back( 1.0 );
+        for ( int i=1; i<nGroups; i++ ) {
+          sourceGroups.push_back( 0.0 );
+        }
+        if(axis == "x" || axis == "X"){
+          sourc = std::make_shared< setSourceXAnnulus > ( name, x0, y0, z0, height, radi, rado, sourceGroups );
+        }
+        else if(axis == "y" || axis == "Y"){
+          sourc = std::make_shared< setSourceYAnnulus > ( name, x0, y0, z0, height, radi, rado, sourceGroups );
+        }
+        else if(axis == "z" || axis == "Z"){
+          sourc = std::make_shared< setSourceZAnnulus > ( name, x0, y0, z0, height, radi, rado, sourceGroups );
+        }
+        else{
+          std::cout << " unknown axis type with name " << axis << std::endl;
+          throw;
+        }
+        
+      }
+      else {
+        std::cout << " unknown distribution type with name " << dist << std::endl;
+        throw;
+      }
+    }
+    else if( type == "setSourceCylinder" ) {
+      pugi::xml_attribute X0   = so.attribute("xSource");
+      pugi::xml_attribute Y0   = so.attribute("ySource");
+      pugi::xml_attribute Z0   = so.attribute("zSource");
+      pugi::xml_attribute Height = so.attribute("height");
+      pugi::xml_attribute Axis = so.attribute("axis");
+      pugi::xml_attribute Rad = so.attribute("radius");
+      std::string dist = so.attribute("distribution").value();
+
+      //Check attributes passed
+      if(!X0 || !Y0 || !Z0 || !Height || !Axis || !Rad || Rad.as_double() < 0 || Height.as_double() < 0){
+        std::cout << " source setSourceCylinder " << name << " initialized incorrectly" << std::endl;
+        throw;
+      }
+
+      double x0   = so.attribute("xSource").as_double();
+      double y0   = so.attribute("ySource").as_double();
+      double z0   = so.attribute("zSource").as_double();
+      double height = so.attribute("height").as_double();
+      std::string axis = so.attribute("axis").value();
+      double rad = so.attribute("radius").as_double();
+
+      if ( dist == "hardcoded" ) {
+        // all neutrons come from the first group
+        std::vector< double > sourceGroups;
+        sourceGroups.push_back( 1.0 );
+        for ( int i=1; i<nGroups; i++ ) {
+          sourceGroups.push_back( 0.0 );
+        }
+        if(axis == "x" || axis == "X"){
+          sourc = std::make_shared< setSourceXAnnulus > ( name, x0, y0, z0, height, 0, rad, sourceGroups );
+        }
+        else if(axis == "y" || axis == "Y"){
+          sourc = std::make_shared< setSourceYAnnulus > ( name, x0, y0, z0, height, 0, rad, sourceGroups );
+        }
+        else if(axis == "z" || axis == "Z"){
+          sourc = std::make_shared< setSourceZAnnulus > ( name, x0, y0, z0, height, 0, rad, sourceGroups );
+        }
+        else{
+          std::cout << " unknown axis type with name " << axis << std::endl;
+          throw;
+        }
+        
+      }
+      else {
+        std::cout << " unknown distribution type with name " << dist << std::endl;
+        throw;
+      }
+    }
+
     else {
       std::cout << " unnknown source type with name " << type << std::endl;
       throw;
