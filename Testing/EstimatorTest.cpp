@@ -5,12 +5,11 @@
 #include "../Estimator.h"
 
 bool close(double a , double b) {
-    std::cout << "abs(" << a << " , " << b << ") = " << fabs(a-b) << std::endl;
     return(fabs(a - b) < 0.0001);
 };
 
 
-TEST_CASE( "Estimator base class set/gets", "[Estimator]" ) {
+TEST_CASE( "Estimator scoring and score in ", "[Estimator]" ) {
 
     Estimator est;
 
@@ -36,14 +35,17 @@ TEST_CASE( "Estimator base class set/gets", "[Estimator]" ) {
     est.score(1.0);
     est.score(1.0);
     est.endHist();
-
+    
+    double a = est.getEstimate(3);
+    double b = est.getUncertainty(3);
+    
     // history tallies work
     SECTION ( " test flux " ) {
-      REQUIRE( close( est.getScalarEstimator(3).first , 2.3333) );
+      REQUIRE( close( a , 2.3333) );
     }
 
     SECTION ( " test uncertainty " ) {
-      REQUIRE( close( est.getScalarEstimator(3).second , 0.57735) );
+      REQUIRE( close( b , 0.47140) );
     }
   
 }
@@ -51,41 +53,24 @@ TEST_CASE( "Estimator base class set/gets", "[Estimator]" ) {
 TEST_CASE( "collision estimator std dev", "[Estimator]" ) {
 
     Estimator est2;
-
-    est2.score(0.17);
-    est2.score(0.12);
+    est2.score(0.1);
+    est2.score(0.1);
     est2.endHist();
-    est2.score(3.2);
+    est2.score(0.3);
+    est2.score(0.8);
     est2.endHist();
-
-    // history tallies work
-    SECTION ( " test flux " ) {
-      REQUIRE( close( est2.getScalarEstimator(2).first , 7.26409) );
-    }
-
-    SECTION ( " test uncertainty " ) {
-      REQUIRE( close( est2.getScalarEstimator(2).second , 9.83104) );
-    }
-  
-}
-
-
-TEST_CASE( "Estimator with no scores" , "[Estimator]" ) {
-
-    Estimator est;
-    est.endHist();
+    est2.score(1.5);
+    est2.score(2.1);
+    est2.endHist();
     
-    // history tallies work
-    SECTION ( " test flux " ) {
-      REQUIRE( est.getScalarEstimator(1).first == 0.0 );
-    }
+    double a = est2.getEstimate(3);
+    double b = est2.getUncertainty(3);
 
-    SECTION ( " test uncertainty " ) {
-      REQUIRE( close( est.getScalarEstimator(1).second , 0.0) );
+    SECTION ( " test uncertainty" ) {
+      REQUIRE( close( b , 1.43836) );
     }
   
 }
 
-//TODO test case for vecSum, std dev and tally system
-//print statements for fer-particle problem to verify tally manually
+
 
