@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <memory> 
 
 class Reaction;
 
