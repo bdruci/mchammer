@@ -136,6 +136,15 @@ bool Utility::FloatEqual(double a, double b, double tolerance){
   }
 }
 
+bool Utility::PointEqual(point lhs, point rhs, double tolerance){
+  if( Utility::FloatEqual(lhs.x, rhs.x, tolerance) && 
+      Utility::FloatEqual(lhs.y, rhs.y, tolerance) && 
+      Utility::FloatEqual(lhs.z, rhs.z, tolerance) ){
+    return true;
+  }
+  return false;
+}
+
 //Effects: Checks to see that the number is about zero
 bool Utility::FloatZero(double a){
   return fabs(a) < (500 * std::numeric_limits<double>::epsilon());

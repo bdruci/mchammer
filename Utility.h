@@ -177,6 +177,9 @@ namespace Utility {
   //the range is passed by the user as a percentage of larger number
   bool FloatEqual(double lhs, double rhs, double tolerance);
 
+  //Effects: Calls FloatEqual on the x,y,z of a point 
+  bool PointEqual(point lhs, point rhs, double tolerance);
+
   //Effects: checks to see if the float is appromixately zero
   bool FloatZero(double f);
 

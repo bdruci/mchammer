@@ -95,6 +95,16 @@ TEST_CASE( "Utility", "[utility]" ) {
     REQUIRE( Utility::FloatZero(std::numeric_limits<double>::epsilon() *-499));
   }
 
+  //Test pointEqual for true 
+  SECTION ( " Test PointEqual for true " ) {
+    point p1(1.111110,1,1);
+    point p2(1.111110,1,1);
+    point p3(0,0,0);
+
+    REQUIRE( Utility::PointEqual( p1, p2, 1E-10));
+    REQUIRE( !Utility::PointEqual( p1, p3, 1E-10));
+  }
+
   /* ****************************************************************************************************** * 
  * Fast Matrix Operations
  *   Functions for calculating determinants of double-typed matrices
