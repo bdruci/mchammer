@@ -12,6 +12,8 @@ public:
     point operator + (point const &pt); // add two points elementwise
     point operator - (point const &pt); // subtract two points elementwise
     double operator * (point const &pt); // dot product of points
+    bool operator == (point const &pt); //check if two points are equal
+    bool operator != (point const &pt); //check if two points are inequal
     
     point operator / (double scalar);   // divide point elementwise by scalar
     point operator * (double scalar);   // multiply point elementwise by scalar

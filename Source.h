@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <cassert>
 #include "Particle.h"
 #ifndef _SOURCE_HEADER_
 #define _SOURCE_HEADER_
@@ -40,5 +41,44 @@ public:
    ~setSourceSphere() {};
    Part_ptr sample();
 };
+class setSourceXAnnulus : public Source {
+private:
+   double x0,y0,z0, height, radInner, radOuter;
+   std::vector <double> groupProbability;
+public:
+   setSourceXAnnulus(std::string label, double xSource, double ySource, double zSource, double height_in, double radInner, double radOuter, std::vector<double> groupProbSet )
+   : Source(label), x0(xSource), y0(ySource), z0(zSource), height(height_in), radInner(radInner), radOuter(radOuter), groupProbability(groupProbSet) {
+      assert(height > 0 && radInner >= 0.0 && radOuter > 0);
+   };
+   ~setSourceXAnnulus() {};
+   Part_ptr sample();
+};
+
+class setSourceYAnnulus : public Source {
+private:
+   double x0,y0,z0, height, radInner, radOuter;
+   std::vector <double> groupProbability;
+public:
+   setSourceYAnnulus(std::string label, double xSource, double ySource, double zSource, double height_in, double radInner, double radOuter, std::vector<double> groupProbSet )
+   : Source(label), x0(xSource), y0(ySource), z0(zSource), height(height_in), radInner(radInner), radOuter(radOuter), groupProbability(groupProbSet) {
+      assert(height > 0 && radInner >= 0 && radOuter > 0);
+   };
+   ~setSourceYAnnulus() {};
+   Part_ptr sample();
+};
+
+class setSourceZAnnulus : public Source {
+private:
+   double x0,y0,z0, height, radInner, radOuter;
+   std::vector <double> groupProbability;
+public:
+   setSourceZAnnulus(std::string label, double xSource, double ySource, double zSource, double height_in, double radInner, double radOuter, std::vector<double> groupProbSet )
+   : Source(label), x0(xSource), y0(ySource), z0(zSource), height(height_in), radInner(radInner), radOuter(radOuter), groupProbability(groupProbSet) {
+      assert(height > 0 && radInner >= 0 && radOuter > 0);
+   };
+   ~setSourceZAnnulus() {};
+   Part_ptr sample();
+};
+
 
 #endif

@@ -12,8 +12,8 @@
       <xs value="3.667E-04 2.2431901E-02"/>
     </Capture>
     <Scatter> <!-- xs vectors are arranged by incident energy, ( g->1, g->2, ..., g->G ) -->
-      <xs value="3.26855E-01 1.37999E-05"/>
-      <xs value="3.16534E-03 9.02867E-01"/>
+      <xs incident_group="1" value="3.26855E-01 1.37999E-05"/>
+      <xs incident_group="2" value="3.16534E-03 9.02867E-01"/>
     </Scatter>
     <Fission>
       <xs value="8.64299E-02 3.32690E-01"/>
@@ -26,8 +26,8 @@
       <xs value="1.59983001E-02 1.096257766E+01"/>
     </Capture>
     <Scatter> <!-- xs vectors are arranged by incident energy, ( g->1, g->2, ..., g->G ) -->
-      <xs value="9.87386E-01 5.16173E-02"/>
-      <xs value="1.38099E-04 2.46461E+00"/>
+      <xs incident_group="1" value="9.87386E-01 5.16173E-02"/>
+      <xs incident_group="2" value="1.38099E-04 2.46461E+00"/>
     </Scatter>
   </nuclide>
   <nuclide name="air_homo">
@@ -35,8 +35,8 @@
       <xs value="5.86724E-06 5.75445902E-05"/>
     </Capture>
     <Scatter> <!-- xs vectors are arranged by incident energy, ( g->1, g->2, ..., g->G ) -->
-      <xs value="1.93542E-04 1.38576E-06"/>
-      <xs value="6.84098E-08 4.41404E-04"/>
+      <xs incident_group="1" value="1.93542E-04 1.38576E-06"/>
+      <xs incident_group="2" value="6.84098E-08 4.41404E-04"/>
     </Scatter>
   </nuclide>
 </nuclides>
