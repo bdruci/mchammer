@@ -95,6 +95,7 @@ TEST_CASE("CollisionHandler" , "[EventHandler]" ) {
   SECTION(" set/get currentCell ") {
     REQUIRE( colHandler.getCurrentCell() == cell );
   }
+
   
   SECTION(" set/get current tet ") {
     REQUIRE( colHandler.getCurrentTet() == tet );
@@ -103,5 +104,6 @@ TEST_CASE("CollisionHandler" , "[EventHandler]" ) {
   // move particle and score
   p->move( 0.1 ); // displace [0,0.1,0] from current location
   colHandler.score( std::make_shared< point >(pt) ,  p ); 
+
 
 }

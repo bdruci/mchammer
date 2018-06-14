@@ -5,6 +5,7 @@
 
 #include "EventHandler.h"
 
+
 /* ===============================================================================================================
  *  CollisionHandler scoring function
  *
@@ -14,20 +15,16 @@
 // if they have been set before the function call
 void CollisionHandler::score(Point_ptr p0 , Part_ptr particle) {
   if ( currentCell != NULL) {
-    std::cout << "Not a null cell \n";
-    vector< EstCol_ptr > est = currentCell->getEstimators();
-    std::cout << "# of estimators in cell: " << est.size() << std::endl;
     for( auto est : currentCell->getEstimators() ) {
       // score all estimators that belong to the cell the particle has collided in
       // these can be collision or track length estimators
       switch(est->getType() ) {
-        std::cout << "scoring an estimator " << std::endl;
 
         case EstimatorCollection::EstimatorType::Collision:
           // multiplier for a collision flux tally is 1 over the macroscopic cross section of the material
           // the collision occured in
           // will be divided by tet, cell, or multicell volume at the end of the calculation
-          //est->score(particle ,  1 / currentCell->getMat()->getMacroXS(particle->getGroup())  );
+          est->score(particle ,  1 / currentCell->getMat()->getMacroXS(particle->getGroup())  );
           break;
         
         case EstimatorCollection::EstimatorType::TrackLength:
@@ -46,15 +43,9 @@ void CollisionHandler::score(Point_ptr p0 , Part_ptr particle) {
 
     } // - end for
     
-    // reset currentCell to null
-    // This forces the client to reset the currentCell every time score is called
-    // This condition is forced to avoid accidently scoring the wrong estimators
-    currentCell = NULL;
-
   } // - end cell estimator block
 
-  if ( currentTet != NULL ) {
-    std::cout << "Not a null tet \n";
+  if ( currentTet != NULL and currentCell != NULL) {
     for( auto est : currentTet->getEstimators() ) {
       // score all estimators that belong to the unstructured mesh element that the particle has collided in
       // this can only be a collision estimator
@@ -75,7 +66,10 @@ void CollisionHandler::score(Point_ptr p0 , Part_ptr particle) {
       } // - end switch
     } // - end for
 
-    // reset currentTet to null, so the client must reset it before the next call to score
+    // reset currentCell and currentTet to null
+    // This forces the client to reset the currentCell every time score is called
+    // This condition is forced to avoid accidently scoring the wrong estimators
+    currentCell = NULL;
     currentTet = NULL;
 
   } // - end tet estimator block
@@ -131,7 +125,8 @@ void SurfaceCrossingHandler::score(Point_ptr p0 , Part_ptr particle) {
         case EstimatorCollection::EstimatorType::TrackLength:
           // multiplier for a track length estimator is the distance the particle traveled in a volume 
           // will be divided by cell, mesh element, or multicell volume at the end of the calculation
-          // NOTE: track length estimators can belong to a cell or structured mesh element, but not to an unstructured mesh (e.g. tet)
+          // NOTE: track length estimators can belong to a cell or structured mesh element, but not to an
+          // unstructured mesh (e.g. tet)
           est->score(particle , Utility::pointL2( *p0 , particle->getPos() ) );
           break;
 
