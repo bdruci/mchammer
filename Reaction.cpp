@@ -41,7 +41,7 @@ double Scatter::getXS( Part_ptr p )
 void Scatter::sample( Part_ptr p, std::stack< Part_ptr > &bank )
 {
   //select energy group to shift
-  double rand = getNum->Urand();
+  double rand = rng->Urand();
   double cutoff = 0;
   int gf = 0;
   int g = p->getGroup();
@@ -69,7 +69,7 @@ void  Fission::sample( Part_ptr p, std::stack< Part_ptr > &bank ) {
   // push all but one of them into the bank, and set working particle to the last one
   // if no secondaries, kill the particle
   int     g = p->getGroup();
-  int     n = floor( nu[g-1] + getNum->Urand() );
+  int     n = floor( nu[g-1] + rng->Urand() );
   double x0 = p->getPos().x;
   double y0 = p->getPos().y;
   double z0 = p->getPos().z;

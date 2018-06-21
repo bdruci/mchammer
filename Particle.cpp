@@ -87,8 +87,8 @@ void Particle::scatter( int gf )
   setGroup(gf);
 
   //change direction (isotropic scattering)
-  double rand = getNum->Urand();
-  double mu0 = 2*getNum->Urand()-1;
+  double rand = rng->Urand();
+  double mu0 = 2*rng->Urand()-1;
   rotate( mu0,rand );
 }
 

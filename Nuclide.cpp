@@ -30,10 +30,10 @@ double Nuclide::getXS( Part_ptr p, std::string reactionName )
   return xs;
 }
 
-// randomly sample a reaction type from this nuclide
+// randomly Urand a reaction type from this nuclide
 Reaction_ptr Nuclide::sampleReaction( Part_ptr p ) 
 {
-  double u = getTotalXS( p ) * getNum->Urand();
+  double u = getTotalXS( p ) * rng->Urand();
   double s = 0.0;
   for ( auto reaction : reactions ) {
     s += reaction->getXS( p );

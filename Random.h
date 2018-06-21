@@ -4,26 +4,24 @@
 #include <vector>
 #include <cassert>
 #include <memory>
+#include <iostream>
 
-/*
-// call to return a uniform random number
-void activateTesting( std::vector< double > inputVec );
-
-// call to return a uniform random number
-double Urand( void );
-
-// call at the beginning of the problem
-void RN_init_problem( unsigned long long* new_seed, int* print_info );
-
-// call at the beginning of each history, nps = index for the history
-void RN_init_particle( unsigned long long nps );
-*/
 #define     LONG  long long
 #define    ULONG  unsigned long long
 #define     REAL  double
 
-class NumberGen {
+class NumGenParent {
+private:
+
+	std::string mode;
+
 public:
+
+	NumGenParent( std::string mode_in ) : mode(mode_in) {};
+	~NumGenParent() {};
+
+	std::string getMode() { return mode; };
+
 	// call to return a uniform random number
 	virtual double Urand() = 0;
 
@@ -34,15 +32,14 @@ public:
 	virtual bool   RN_test_basic(void) = 0;
 };
 
-class Rand : public NumberGen {
+class Rand : public NumGenParent {
 
 public:
-	Rand();
-	~Rand();
+	
+	Rand() : NumGenParent("Random") {};
+	~Rand() {};
 
-	double Urand() override;
-
-	void RN_init_problem( unsigned long long* new_seed, int* print_info );
+	double Urand();
 
 	void RN_init_particle( unsigned long long nps );
 
@@ -51,7 +48,7 @@ public:
 	bool   RN_test_basic(void);
 };
 
-class Testing : public NumberGen {
+class Testing : public NumGenParent {
 
 private:
 
@@ -60,17 +57,27 @@ private:
 
 public:
 
-	Testing( std::vector<double> loopThrough_in ) : testIndex(0), loopThrough(loopThrough_in) {};
-	Testing() : testIndex(0) {};
-	~Testing();
+	//default ctor and with input depending on possible changes in implementation
+	Testing( std::vector<double> loopThrough_in ) : NumGenParent("Testing"), 
+													testIndex(0), loopThrough(loopThrough_in) {};
+	Testing() : NumGenParent("Testing"), testIndex(0) {};
+	~Testing() {};
 
+	//Set the vector the testing mode will return 
 	void setLoopThrough( std::vector<double> loopThrough_in ){
 		loopThrough = loopThrough_in;
+		testIndex = 0;
+
+		//For debugging - delete after ***
+		std::cout << "My Loop through was set to: " << std::endl;
+		for (int i = 0; i < loopThrough.size(); ++i){
+			std::cout << loopThrough.at(i) << " ";
+		}
+		std::cout << std::endl;
 	}
 
+	//Functions the same as Rand's but iterates over a known vector
 	double Urand() override;
-
-	void RN_init_problem( unsigned long long* new_seed, int* print_info ) {assert(false);};
 
 	void RN_init_particle( unsigned long long nps ) {assert(false);};
 
@@ -79,12 +86,14 @@ public:
 	bool   RN_test_basic(void) {assert(false);};
 };
 
-//typedef std::shared_ptr<NumberGen> gen_ptr;
-
+//Construct one instance of each derived class
 static Rand randNumGen;
+static Testing testNumGen;
 
-static NumberGen * getNum = &randNumGen;
+//Make polymorphic pointer for rest of program to use
+static NumGenParent * rng = &randNumGen;
 
-void activateTesting( std::vector<double> loopThrough_in );
+//This function will set the loopThrough of testNumGen to the input and make rng point to it
+void activateTesting( std::vector< double > loopThrough_in );
 
 #endif

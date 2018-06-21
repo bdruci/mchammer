@@ -8,7 +8,7 @@
 unsigned int Source::groupSample(std::vector<double> groupProbability)
 {
 	if(groupProbability.size() > 1) {
-	    double rand = getNum->Urand();
+	    double rand = rng->Urand();
 	    double c = 0;
 	    for(unsigned int i = 0; i < groupProbability.size(); i++)
 	    {
@@ -30,8 +30,8 @@ Part_ptr setSourcePoint::sample(){
 	
 	point pos = point(x0,y0,z0);
 	
-	double mu = 2 * getNum->Urand() - 1;
-	double phi = 2 * pi*getNum->Urand();
+	double mu = 2 * rng->Urand() - 1;
+	double phi = 2 * pi*rng->Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
 	double omegaZ=sin(acos(mu))*sin(phi);
@@ -45,9 +45,9 @@ Part_ptr setSourcePoint::sample(){
 Part_ptr setSourceSphere::sample(){
 	double pi = acos(-1.);
 	//Radius of the new particle
-	//double radius = pow((pow(radInner,3.0) + Urand()*(pow(radOuter,3.0)-pow(radInner,3.0))),(1. / 3.));
-	//double mu = 2.0 * Urand() - 1.0;
-	//double phi = 2.0 * pi*Urand();
+	//double radius = pow((pow(radInner,3.0) + rng->Urand()*(pow(radOuter,3.0)-pow(radInner,3.0))),(1. / 3.));
+	//double mu = 2.0 * rng->Urand() - 1.0;
+	//double phi = 2.0 * pi*rng->Urand();
 
 	//double x=radius*sqrt(1-pow(mu,2.))*cos(phi)+x0;
 	//double y=radius*sqrt(1-pow(mu,2.))*sin(phi)+y0;
@@ -60,9 +60,9 @@ Part_ptr setSourceSphere::sample(){
 	bool reject = true;
 	while(reject)
 	{
-		x = 2*getNum->Urand()*radOuter;
-		y = 2*getNum->Urand()*radOuter;
-		z = 2*getNum->Urand()*radOuter;
+		x = 2*rng->Urand()*radOuter;
+		y = 2*rng->Urand()*radOuter;
+		z = 2*rng->Urand()*radOuter;
 		double dist = sqrt(x*x+y*y+z*z);
 		if(dist < radOuter)
 			reject = false;
@@ -72,8 +72,8 @@ Part_ptr setSourceSphere::sample(){
 	point pos = point(x,y,z);
 
         // direction sampling	
-	double mu = 2 * getNum->Urand() - 1;
-	double phi = 2 * pi*getNum->Urand();
+	double mu = 2 * rng->Urand() - 1;
+	double phi = 2 * pi*rng->Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
 	double omegaZ=sin(acos(mu))*sin(phi);
@@ -97,18 +97,19 @@ Part_ptr setSourceXAnnulus::sample(){
 
     //direction sampling	
     //QUESTION?? Is this any random angle?
-	double mu = 2 * getNum->Urand() - 1;
-	double phi = 2 * pi*getNum->Urand();
+	double mu = 2 * rng->Urand() - 1;
+	double phi = 2 * pi*rng->Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
 	double omegaZ=sin(acos(mu))*sin(phi);
 	point dir = point(omegaX,omegaY,omegaZ);
 
 	double x, y, z;
-	x = height*getNum->Urand();
+	x = height*rng->Urand();
 	if(radInner != 0) {
-		phi = 2 * pi*getNum->Urand();
-		double dist = std::sqrt(radInner*radInner + (radOuter*radOuter - radInner*radInner)*getNum->Urand());	
+		phi = 2 * pi*rng->Urand();
+		double dist = std::sqrt(radInner*radInner + 
+			          (radOuter*radOuter - radInner*radInner)*rng->Urand());	
 		y = dist*cos(phi);
 		z = dist*sin(phi);
 	}
@@ -116,8 +117,8 @@ Part_ptr setSourceXAnnulus::sample(){
 		bool reject = true;
 		while(reject)
 		{
-			y = 2*getNum->Urand()*radOuter;
-			z = 2*getNum->Urand()*radOuter;
+			y = 2*rng->Urand()*radOuter;
+			z = 2*rng->Urand()*radOuter;
 			double dist = sqrt(y*y+z*z);
 			if(dist < radOuter)
 				reject = false;
@@ -142,18 +143,19 @@ Part_ptr setSourceYAnnulus::sample(){
 	auto group = groupSample(groupProbability);
 
     //direction sampling	
-	double mu = 2 * getNum->Urand() - 1;
-	double phi = 2 * pi*getNum->Urand();
+	double mu = 2 * rng->Urand() - 1;
+	double phi = 2 * pi*rng->Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
 	double omegaZ=sin(acos(mu))*sin(phi);
 	point dir = point(omegaX,omegaY,omegaZ);
 
 	double x, y, z;
-	y = height*getNum->Urand();
+	y = height*rng->Urand();
 	if(radInner != 0){
-		phi = 2 * pi*getNum->Urand();
-		double dist = std::sqrt(radInner*radInner + (radOuter*radOuter - radInner*radInner)*getNum->Urand());
+		phi = 2 * pi*rng->Urand();
+		double dist = std::sqrt(radInner*radInner + 
+			          (radOuter*radOuter - radInner*radInner)*rng->Urand());
 		x = dist*cos(phi);
 		z = dist*sin(phi);
 	}
@@ -161,8 +163,8 @@ Part_ptr setSourceYAnnulus::sample(){
 		bool reject = true;
 		while(reject)
 		{
-			x = 2*getNum->Urand()*radOuter;
-			z = 2*getNum->Urand()*radOuter;
+			x = 2*rng->Urand()*radOuter;
+			z = 2*rng->Urand()*radOuter;
 			double dist = sqrt(x*x+z*z);
 			if(dist < radOuter)
 				reject = false;
@@ -188,18 +190,19 @@ Part_ptr setSourceZAnnulus::sample(){
 	auto group = groupSample(groupProbability);
 
     //direction sampling	
-	double mu = 2 * getNum->Urand() - 1;
-	double phi = 2 * pi*getNum->Urand();
+	double mu = 2 * rng->Urand() - 1;
+	double phi = 2 * pi*rng->Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
 	double omegaZ=sin(acos(mu))*sin(phi);
 	point dir = point(omegaX,omegaY,omegaZ);
 
 	double x,y,z;
-	z = height*getNum->Urand();
+	z = height*rng->Urand();
 	if(radInner != 0){
-		phi = 2 * pi*getNum->Urand();
-		double dist = std::sqrt(radInner*radInner + (radOuter*radOuter - radInner*radInner)*getNum->Urand());
+		phi = 2 * pi*rng->Urand();
+		double dist = std::sqrt(radInner*radInner + 
+			          (radOuter*radOuter - radInner*radInner)*rng->Urand());
 		x = dist*cos(phi);
 		y = dist*sin(phi);
 	}
@@ -207,8 +210,8 @@ Part_ptr setSourceZAnnulus::sample(){
 		bool reject = true;
 		while(reject)
 		{
-			x = 2*getNum->Urand()*radOuter;
-			y = 2*getNum->Urand()*radOuter;
+			x = 2*rng->Urand()*radOuter;
+			y = 2*rng->Urand()*radOuter;
 			double dist = sqrt(x*x+y*y);
 			if(dist < radOuter)
 				reject = false;

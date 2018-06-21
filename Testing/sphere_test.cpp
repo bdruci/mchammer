@@ -1,3 +1,4 @@
+
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 
 #include <limits>
@@ -48,7 +49,7 @@ TEST_CASE( "Sphere", "[sphere]" ) {
     SECTION ( " random points near sphere " ) {
       bool rand_test_result = true;
       for ( unsigned i = 0 ; i < 1000 ; i++ ) {
-        point  p( 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0 );
+        point  p( 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0 );
         double eval_result = pow( p.x - x0, 2 ) + pow( p.y - y0, 2 ) + pow( p.z - z0, 2 ) - r*r;
         rand_test_result = rand_test_result && ( theSphere.eval(p) == eval_result );
       }

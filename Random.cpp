@@ -64,6 +64,7 @@
 #include <math.h>
 #include <string.h>
 #include <vector>
+#include <iostream>
 
 #include "Random.h"
 
@@ -129,18 +130,11 @@ const ULONG  RN_CHECK[10] = {
 
 //----------------------------------------------------------------------
 //
-/*
-void    activateTesting( std::vector< double > inputVec ) {
-    // MCNP random number generator
-    loopThrough = inputVec;
-    testingMode = true;
-    return;
-}
-*/
 
 void activateTesting( std::vector< double > loopThrough_in ) {
-    static Testing testNumGen( loopThrough_in );
-    getNum = &testNumGen;
+
+    testNumGen.setLoopThrough(loopThrough_in);
+    rng = &testNumGen;
 }
 
 //----------------------------------------------------------------------
@@ -184,6 +178,7 @@ ULONG   Rand::RN_skip_ahead( ULONG* s, LONG* n ) {
 }
 //----------------------------------------------------------------------
 //
+/* - not needed
 void Rand::RN_init_problem( ULONG* new_seed,
                      int*   print_info ) {
     // * initialize MCNP random number parameters for problem,
@@ -226,6 +221,7 @@ void Rand::RN_init_problem( ULONG* new_seed,
     RN_SEED    = RN_SEED0;
     return;
 }
+*/
 //----------------------------------------------------------------------
 //
 void    Rand::RN_init_particle( ULONG nps ) {
@@ -240,23 +236,35 @@ void    Rand::RN_init_particle( ULONG nps ) {
 //----------------------------------------------------------------------
 //
 bool    Rand::RN_test_basic( void ) {
-    // test routine for basic random number generator
-    //
+    // test routine for basic random number generator - adapted from the original fxn
+
     ULONG  seeds[10],  one=1ULL, z=0ULL;
-    int i, k=1;
+    int i,j, k=1;
     double s = 0.0;
     
     // set seed
-    RN_init_problem( &one,  &k );
+    //RN_init_problem( &one,  &k );
+
+    //All the needed parts from RN_init_problem
+    if( one>0 ) {
+        RN_SEED0 = one;
+    }
+    if( sizeof(RN_SEED)<8 ) {
+        printf("***** RN_init_problem ERROR:"
+               " <64 bits in long-int, can-t generate RN-s\n");
+        return false;
+    }
+    RN_SEED    = RN_SEED0;
+
     
     // get the    5 seeds, then skip a few, get 5 more - directly
-    for( i=0; i<5;      i++ ) { s += Urand(); seeds[i] = RN_SEED; }
-    for( i=5; i<123455; i++ ) { s += Urand(); }
-    for( i=5; i<10;     i++ ) { s += Urand(); seeds[i] = RN_SEED; }
+    for( i=0; i<5;      i++ ) { s += rng->Urand(); seeds[i] = RN_SEED; }
+    for( i=5; i<123455; i++ ) { s += rng->Urand(); }
+    for( i=5; i<10;     i++ ) { s += rng->Urand(); seeds[i] = RN_SEED; }
     
     // compare
     for( i=0; i<10; i++ ) {
-        //j = (i<5)? i+1 : i+123451;
+        j = (i<5)? i+1 : i+123451;
         if( seeds[i] != RN_CHECK[i] ) {
             return false;
         }
