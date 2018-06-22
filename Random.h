@@ -67,13 +67,6 @@ public:
 	void setLoopThrough( std::vector<double> loopThrough_in ){
 		loopThrough = loopThrough_in;
 		testIndex = 0;
-
-		//For debugging - delete after ***
-		std::cout << "My Loop through was set to: " << std::endl;
-		for (int i = 0; i < loopThrough.size(); ++i){
-			std::cout << loopThrough.at(i) << " ";
-		}
-		std::cout << std::endl;
 	}
 
 	//Functions the same as Rand's but iterates over a known vector
@@ -86,14 +79,17 @@ public:
 	bool   RN_test_basic(void) {assert(false);};
 };
 
+//This function will set the loopThrough of testNumGen to the input and return a parent pointer to it
+//USAGE: rng = testingNumbers( vector_of_testing_numbers );
+NumGenParent * activateTesting( std::vector< double > loopThrough_in );
+
+NumGenParent * deactivateTesting();
+
 //Construct one instance of each derived class
 static Rand randNumGen;
 static Testing testNumGen;
 
 //Make polymorphic pointer for rest of program to use
 static NumGenParent * rng = &randNumGen;
-
-//This function will set the loopThrough of testNumGen to the input and make rng point to it
-void activateTesting( std::vector< double > loopThrough_in );
 
 #endif

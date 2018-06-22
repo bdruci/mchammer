@@ -82,25 +82,9 @@
 #define     REAL  double
 
 //-------------------------------------
-// Public interface for functions
-//-------------------------------------
-/*
-void   activateTesting( std::vector< double > inputVec ); // added for testing mode
-REAL   Urand(void);
-ULONG  RN_skip_ahead( ULONG* seed, LONG* nskip );
-void   RN_init_problem( ULONG* new_seed,    int* print_info );
-void   RN_init_particle( ULONG nps );
-void   RN_test_basic(void);
-//-------------------------------------
-// Testing parameters
-//-------------------------------------
-int                    testIndex = 0;
-bool                   testingMode = false; // added for testing mode
-std::vector< double >  loopThrough; // added for testing mode
-//-------------------------------------
 // Constants for standard RN generators
 //-------------------------------------
-*/
+
 int    RN_INDEX   = 1;
 ULONG  RN_MULT    = 3512401965023503517ULL;
 ULONG  RN_ADD     = 0ULL;
@@ -120,6 +104,7 @@ ULONG  RN_SEED    = 1ULL; // current seed
 // reference data:  seeds for case of init.seed = 1,
 //                  seed numbers for index 1-5, 123456-123460
 //----------------------------------------------------------------------
+
 const ULONG  RN_CHECK[10] = {
     // ***** 5 *****
     3512401965023503517ULL, 5461769869401032777ULL, 1468184805722937541ULL,
@@ -129,16 +114,20 @@ const ULONG  RN_CHECK[10] = {
 };
 
 //----------------------------------------------------------------------
-//
 
-void activateTesting( std::vector< double > loopThrough_in ) {
+NumGenParent * activateTesting( std::vector< double > loopThrough_in ) {
 
+    //static Testing testNumGen;
     testNumGen.setLoopThrough(loopThrough_in);
-    rng = &testNumGen;
+    return &testNumGen;
+}
+
+NumGenParent * deactivateTesting() {
+    return &randNumGen;
 }
 
 //----------------------------------------------------------------------
-//
+
 double    Testing::Urand() {
     double toReturn = loopThrough.at(testIndex);
     testIndex += 1;
@@ -155,7 +144,7 @@ REAL    Rand::Urand() {
 }
 
 //----------------------------------------------------------------------
-//
+
 ULONG   Rand::RN_skip_ahead( ULONG* s, LONG* n ) {
     //  skip ahead n RNs:   RN_SEED*RN_MULT^n mod RN_MOD
     ULONG seed  = *s;
@@ -176,54 +165,9 @@ ULONG   Rand::RN_skip_ahead( ULONG* s, LONG* n ) {
     
     return (ULONG) rn;
 }
+
 //----------------------------------------------------------------------
-//
-/* - not needed
-void Rand::RN_init_problem( ULONG* new_seed,
-                     int*   print_info ) {
-    // * initialize MCNP random number parameters for problem,
-    //   based on user input.  This routine should be called
-    //   only from the main thread, if OMP threading is being used.
-    //
-    // * for initial & continue runs, these args should be set:
-    //     new_seed   - from RAND seed=        (or dbcn(1))
-    //     output     - logical, print RN seed & mult if true
-    //
-    // * check on size of long-ints & long-int arithmetic
-    // * check the multiplier
-    // * advance the base seed for the problem
-    // * set the initial particle seed
-    // * initialize the counters for RN stats
-    
-    // set defaults, override if input supplied: seed, mult, stride
-    if( *new_seed>0 ) {
-        RN_SEED0 = *new_seed;
-    }
-    if( *print_info ) {
-        printf( "\n%s\n%s%20llu%s\n%s%20llu%s\n"
-               "%s%20llu%s\n%s%20d%s\n%s%20llu%s\n%s\n\n",
-               " ***************************************************",
-               " * Random Number Seed       = ", RN_SEED0,       " *",
-               " * Random Number Multiplier = ", RN_MULT,        " *",
-               " * Random Number Adder      = ", RN_ADD,         " *",
-               " * Random Number Bits Used  = ", RN_BITS,        " *",
-               " * Random Number Stride     = ", RN_STRIDE,      " *",
-               " ***************************************************");
-        printf(" using random number generator initial seed = %llu\n", RN_SEED0 );
-    }
-    // double-check on number of bits in a long long unsigned int
-    if( sizeof(RN_SEED)<8 ) {
-        printf("***** RN_init_problem ERROR:"
-               " <64 bits in long-int, can-t generate RN-s\n");
-        exit(1);
-    }
-    // set the initial particle seed
-    RN_SEED    = RN_SEED0;
-    return;
-}
-*/
-//----------------------------------------------------------------------
-//
+
 void    Rand::RN_init_particle( ULONG nps ) {
     // initialize MCNP random number parameters for particle "nps"
     //
@@ -233,8 +177,9 @@ void    Rand::RN_init_particle( ULONG nps ) {
     LONG  nskp = nps * RN_STRIDE;
     RN_SEED  = RN_skip_ahead( &RN_SEED0, &nskp );
 }
+
 //----------------------------------------------------------------------
-//
+
 bool    Rand::RN_test_basic( void ) {
     // test routine for basic random number generator - adapted from the original fxn
 
@@ -271,6 +216,7 @@ bool    Rand::RN_test_basic( void ) {
     }
     return true;
 }
+
 //----------------------------------------------------------------------
 
 //#ifdef __cplusplus
