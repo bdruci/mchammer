@@ -17,7 +17,8 @@ TEST_CASE( "Testing", "[Random]") {
 
 	SECTION ( " Activate and loop through a few times") {
 		std::vector<double> testVec = {1,2,3,4,5};
-		rng = activateTesting(testVec);
+		ReturnSetNums testClass( testVec );
+		rng = &testClass;
 		REQUIRE( rng->getMode() == "Testing" );
 		for(int i = 1; i < 6; ++i){
 			REQUIRE(rng->Urand() == i);
@@ -35,23 +36,20 @@ TEST_CASE( "Testing", "[Random]") {
 		std::vector<double> testVec1 = {5,4,3,2,1};
 		std::vector<double> testVec2 = {1,2,3,4,5};
 
-		rng = activateTesting(testVec1);
+		ReturnSetNums testClass1( testVec1 );
+		rng = &testClass1;
 		REQUIRE( rng->getMode() == "Testing" );
 
 		for(int i = 5; i > 0; --i){
 			REQUIRE(rng->Urand() == i);
 		}
 
-		rng = activateTesting(testVec2);
+		ReturnSetNums testClass2( testVec2 );
+		rng = &testClass2;
 		REQUIRE( rng->getMode() == "Testing" );
 
 		for(int i = 1; i < 6; ++i){
 			REQUIRE(rng->Urand() == i);
 		}
 	}
-
-	SECTION ( " test deactivateTesting using modified \"old test\" " ) {
-		rng = deactivateTesting();
-      	REQUIRE(rng->RN_test_basic());
-    }
 }

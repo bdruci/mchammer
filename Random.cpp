@@ -115,23 +115,10 @@ const ULONG  RN_CHECK[10] = {
 
 //----------------------------------------------------------------------
 
-NumGenParent * activateTesting( std::vector< double > loopThrough_in ) {
-
-    //static Testing testNumGen;
-    testNumGen.setLoopThrough(loopThrough_in);
-    return &testNumGen;
-}
-
-NumGenParent * deactivateTesting() {
-    return &randNumGen;
-}
-
-//----------------------------------------------------------------------
-
-double    Testing::Urand() {
+double    ReturnSetNums::Urand() {
     double toReturn = loopThrough.at(testIndex);
     testIndex += 1;
-    if ( testIndex == loopThrough.size() ) {
+    if ( (unsigned) testIndex == loopThrough.size() ) {
         testIndex = 0;
     }
     return (double) (toReturn);

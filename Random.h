@@ -10,19 +10,19 @@
 #define    ULONG  unsigned long long
 #define     REAL  double
 
-class NumGenParent {
+//Parent class to hold a true rand num gen and a testing class
+class RandomNumberGenerator {
 private:
 
 	std::string mode;
 
 public:
 
-	NumGenParent( std::string mode_in ) : mode(mode_in) {};
-	~NumGenParent() {};
+	RandomNumberGenerator( std::string mode_in ) : mode(mode_in) {};
+	~RandomNumberGenerator() {};
 
 	std::string getMode() { return mode; };
 
-	// call to return a uniform random number
 	virtual double Urand() = 0;
 
 	virtual void RN_init_particle( unsigned long long nps ) = 0;
@@ -32,13 +32,15 @@ public:
 	virtual bool   RN_test_basic(void) = 0;
 };
 
-class Rand : public NumGenParent {
+//True Random class
+class Rand : public RandomNumberGenerator {
 
 public:
 	
-	Rand() : NumGenParent("Random") {};
+	Rand() : RandomNumberGenerator("Random") {};
 	~Rand() {};
 
+	// call to return a uniform random number
 	double Urand();
 
 	void RN_init_particle( unsigned long long nps );
@@ -48,7 +50,8 @@ public:
 	bool   RN_test_basic(void);
 };
 
-class Testing : public NumGenParent {
+//This class is for testing purposes
+class ReturnSetNums : public RandomNumberGenerator {
 
 private:
 
@@ -57,11 +60,10 @@ private:
 
 public:
 
-	//default ctor and with input depending on possible changes in implementation
-	Testing( std::vector<double> loopThrough_in ) : NumGenParent("Testing"), 
+	ReturnSetNums( std::vector<double> loopThrough_in ) : RandomNumberGenerator("Testing"), 
 													testIndex(0), loopThrough(loopThrough_in) {};
-	Testing() : NumGenParent("Testing"), testIndex(0) {};
-	~Testing() {};
+	ReturnSetNums() : RandomNumberGenerator("Testing"), testIndex(0) {};
+	~ReturnSetNums() {};
 
 	//Set the vector the testing mode will return 
 	void setLoopThrough( std::vector<double> loopThrough_in ){
@@ -69,27 +71,28 @@ public:
 		testIndex = 0;
 	}
 
-	//Functions the same as Rand's but iterates over a known vector
+	//Set the place in the loopThrough vector
+	void setIndex( int index ){
+		testIndex = index;
+	}
+
+	//Functions the same as Rand's but iterates over known vector
 	double Urand() override;
 
-	void RN_init_particle( unsigned long long nps ) {assert(false);};
+	//Init in this case just resets the index
+	void RN_init_particle( unsigned long long nps ) { testIndex = 0; };
 
+	//Shouldn't be called
 	ULONG  RN_skip_ahead( ULONG* seed, LONG* nskip ) {assert(false);};
 
+	//Shouldn't be called
 	bool   RN_test_basic(void) {assert(false);};
 };
 
-//This function will set the loopThrough of testNumGen to the input and return a parent pointer to it
-//USAGE: rng = testingNumbers( vector_of_testing_numbers );
-NumGenParent * activateTesting( std::vector< double > loopThrough_in );
-
-NumGenParent * deactivateTesting();
-
-//Construct one instance of each derived class
+//Construct instance of Rand class so only one has Urand called on it
 static Rand randNumGen;
-static Testing testNumGen;
 
 //Make polymorphic pointer for rest of program to use
-static NumGenParent * rng = &randNumGen;
+static RandomNumberGenerator * rng = &randNumGen;
 
 #endif
