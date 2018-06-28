@@ -4,8 +4,10 @@
 #include "Random.h"
 #include "Source.h"
 #include "Particle.h"
+#include "Distribution.h"
 
-
+randomDirection dirSampleClass;
+Distribution * randDir = &dirSampleClass;
 
 unsigned int Source::groupSample(std::vector<double> groupProbability)
 {
@@ -26,18 +28,12 @@ unsigned int Source::groupSample(std::vector<double> groupProbability)
 }
 
 Part_ptr setSourcePoint::sample(){
-	double pi = acos(-1.);
 	
 	auto group = groupSample(groupProbability);
 	
 	point pos = point(x0,y0,z0);
-	
-	double mu = 2 * Urand() - 1;
-	double phi = 2 * pi*Urand();
-	double omegaX=mu;
-	double omegaY=sin(acos(mu))*cos(phi);
-	double omegaZ=sin(acos(mu))*sin(phi);
-	point dir = point(omegaX,omegaY,omegaZ);
+
+	point dir = randDir->sample();
 	
     Part_ptr p = std::make_shared<Particle>(pos, dir, group );
 
@@ -45,87 +41,30 @@ Part_ptr setSourcePoint::sample(){
 }
 
 Part_ptr setSourceSphere::sample(){
-	double pi = acos(-1.);
-	//Radius of the new particle
-	//double radius = pow((pow(radInner,3.0) + Urand()*(pow(radOuter,3.0)-pow(radInner,3.0))),(1. / 3.));
-	//double mu = 2.0 * Urand() - 1.0;
-	//double phi = 2.0 * pi*Urand();
 
-	//double x=radius*sqrt(1-pow(mu,2.))*cos(phi)+x0;
-	//double y=radius*sqrt(1-pow(mu,2.))*sin(phi)+y0;
-	//double z=radius*mu+z0;
-	//std::cout << "mu: " << mu << " x: " << x << " y: " << y << " z: " << z << std::endl;
-	//std::cout << std::endl;
-	double x;
-	double y;
-	double z;
-	bool reject = true;
-	while(reject)
-	{
-		x = 2*Urand()*radOuter;
-		y = 2*Urand()*radOuter;
-		z = 2*Urand()*radOuter;
-		double dist = sqrt(x*x+y*y+z*z);
-		if(dist < radOuter)
-			reject = false;
-	}
+	sphericalGeometry sphere(x0, y0, z0, radInner, radOuter);
+
 	auto group = groupSample(groupProbability);
 	
-	point pos = point(x,y,z);
+	point pos = sphere.sample();
 
-        // direction sampling	
-	double mu = 2 * Urand() - 1;
-	double phi = 2 * pi*Urand();
-	double omegaX=mu;
-	double omegaY=sin(acos(mu))*cos(phi);
-	double omegaZ=sin(acos(mu))*sin(phi);
-	point dir = point(omegaX,omegaY,omegaZ);
+	point dir = randDir->sample();
 	
-     Part_ptr p = std::make_shared<Particle>(pos, dir, group );
+    Part_ptr p = std::make_shared<Particle>(pos, dir, group );
 
 	return p;
 
 }
 
-Part_ptr setSourceXAnnulus::sample(){
-	//I dont like rejection sampling for this becuase the inner and outer radii may be 
-	//very similar in some systems - if the radii are close and large it may take a very long
-	//time to actually guess a point in the box on the annulus
-	//However - if a cylinder is passed I do switch to rejection
+Part_ptr setSourceXAnnulus::sample() {
 
-	double pi = acos(-1.);
+	xAnnularGeometry xAnnulus(x0, y0, z0, height, radInner, radOuter);
 
 	auto group = groupSample(groupProbability);
 
-    //direction sampling	
-    //QUESTION?? Is this any random angle?
-	double mu = 2 * Urand() - 1;
-	double phi = 2 * pi*Urand();
-	double omegaX=mu;
-	double omegaY=sin(acos(mu))*cos(phi);
-	double omegaZ=sin(acos(mu))*sin(phi);
-	point dir = point(omegaX,omegaY,omegaZ);
+	point dir = randDir->sample();
 
-	double x, y, z;
-	x = height*Urand();
-	if(radInner != 0) {
-		phi = 2 * pi*Urand();
-		double dist = std::sqrt(radInner*radInner + (radOuter*radOuter - radInner*radInner)*Urand());	
-		y = dist*cos(phi);
-		z = dist*sin(phi);
-	}
-	else{
-		bool reject = true;
-		while(reject)
-		{
-			y = 2*Urand()*radOuter;
-			z = 2*Urand()*radOuter;
-			double dist = sqrt(y*y+z*z);
-			if(dist < radOuter)
-				reject = false;
-		}
-	}
-	point pos = point(x,y,z);
+	point pos = xAnnulus.sample();
 
     Part_ptr p = std::make_shared<Particle>(pos, dir, group );
 
@@ -134,43 +73,14 @@ Part_ptr setSourceXAnnulus::sample(){
 }
 
 Part_ptr setSourceYAnnulus::sample(){
-	//I dont like rejection sampling for this becuase the inner and outer radii may be 
-	//very similar in some systems - if the radii are close and large it may take a very long
-	//time to actually guess a point in the box on the annulus
-	//However - if a cylinder is passed I do switch to rejection
 
-	double pi = acos(-1.);
+	yAnnularGeometry yAnnulus(x0, y0, z0, height, radInner, radOuter);
 
 	auto group = groupSample(groupProbability);
 
-    //direction sampling	
-	double mu = 2 * Urand() - 1;
-	double phi = 2 * pi*Urand();
-	double omegaX=mu;
-	double omegaY=sin(acos(mu))*cos(phi);
-	double omegaZ=sin(acos(mu))*sin(phi);
-	point dir = point(omegaX,omegaY,omegaZ);
+	point dir = randDir->sample();
 
-	double x, y, z;
-	y = height*Urand();
-	if(radInner != 0){
-		phi = 2 * pi*Urand();
-		double dist = std::sqrt(radInner*radInner + (radOuter*radOuter - radInner*radInner)*Urand());
-		x = dist*cos(phi);
-		z = dist*sin(phi);
-	}
-	else{
-		bool reject = true;
-		while(reject)
-		{
-			x = 2*Urand()*radOuter;
-			z = 2*Urand()*radOuter;
-			double dist = sqrt(x*x+z*z);
-			if(dist < radOuter)
-				reject = false;
-		}
-	}
-	point pos = point(x,y,z);
+	point pos = yAnnulus.sample();
 
     Part_ptr p = std::make_shared<Particle>(pos, dir, group );
 
@@ -180,44 +90,14 @@ Part_ptr setSourceYAnnulus::sample(){
 
 
 Part_ptr setSourceZAnnulus::sample(){
-	//I dont like rejection sampling for this becuase the inner and outer radii may be 
-	//very similar in some systems - if the radii are close and large it may take a very long
-	//time to actually guess a point in the box on the annulus
-	//However - if a cylinder is passed I do switch to rejection
 
-	double pi = acos(-1.);
+	zAnnularGeometry zAnnulus(x0, y0, z0, height, radInner, radOuter);
 
 	auto group = groupSample(groupProbability);
 
-    //direction sampling	
-	double mu = 2 * Urand() - 1;
-	double phi = 2 * pi*Urand();
-	double omegaX=mu;
-	double omegaY=sin(acos(mu))*cos(phi);
-	double omegaZ=sin(acos(mu))*sin(phi);
-	point dir = point(omegaX,omegaY,omegaZ);
+	point dir = randDir->sample();
 
-	double x,y,z;
-	z = height*Urand();
-	if(radInner != 0){
-		phi = 2 * pi*Urand();
-		double dist = std::sqrt(radInner*radInner + (radOuter*radOuter - radInner*radInner)*Urand());
-		x = dist*cos(phi);
-		y = dist*sin(phi);
-	}
-	else{
-		bool reject = true;
-		while(reject)
-		{
-			x = 2*Urand()*radOuter;
-			y = 2*Urand()*radOuter;
-			double dist = sqrt(x*x+y*y);
-			if(dist < radOuter)
-				reject = false;
-		}
-	}
-	point pos = point(x,y,z);
-
+	point pos = zAnnulus.sample();
 
     Part_ptr p = std::make_shared<Particle>(pos, dir, group );
 
