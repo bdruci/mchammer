@@ -52,7 +52,7 @@ public:
 
 //This class is for testing purposes
 class ReturnSetNums : public RandomNumberGenerator {
-
+//Usage: construct a ReturnSetNums object in testing file and set rng equal to it by reference
 private:
 
 	int testIndex;

@@ -118,9 +118,10 @@ const ULONG  RN_CHECK[10] = {
 double    ReturnSetNums::Urand() {
     double toReturn = loopThrough.at(testIndex);
     testIndex += 1;
-    if ( (unsigned) testIndex == loopThrough.size() ) {
-        testIndex = 0;
-    }
+
+    //resets to zero at the end of the loop
+    testIndex = testIndex % loopThrough.size();
+
     return (double) (toReturn);
     }
 
