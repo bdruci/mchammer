@@ -28,7 +28,7 @@ double Material::getMacroXS( Part_ptr p )
   return getAtomDensity() * getMicroXS( p );
 }
 
-// randomly Urand a nuclide based on total cross sections and atomic fractions
+// randomly sample a nuclide based on total cross sections and atomic fractions
 Nuclide_ptr Material::sampleNuclide( Part_ptr p ) 
 {
   double u = getMicroXS( p ) * rng->Urand();
@@ -44,11 +44,11 @@ Nuclide_ptr Material::sampleNuclide( Part_ptr p )
   return nullptr;
 }
 
-// function that Urands an entire collision: Urand nuclide, then its reaction, 
+// function that samples an entire collision: sample nuclide, then its reaction, 
 // and finally process that reaction with input pointers to the working particle p
 // and the particle bank
 void Material::sampleCollision( Part_ptr p, std::stack< Part_ptr > &bank ) {
-  // first Urand nuclide
+  // first sample nuclide
   Nuclide_ptr  N = sampleNuclide( p );
 
   // now get the reaction

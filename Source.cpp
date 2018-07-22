@@ -63,8 +63,8 @@ Part_ptr setSourceSphere::sample(){
 		x = 2*rng->Urand()*radOuter;
 		y = 2*rng->Urand()*radOuter;
 		z = 2*rng->Urand()*radOuter;
-		double dist = sqrt(x*x+y*y+z*z);
-		if(dist < radOuter)
+		double dist = (x*x+y*y+z*z);
+		if(dist < radOuter*radOuter)
 			reject = false;
 	}
 	auto group = groupSample(groupProbability);
@@ -95,8 +95,6 @@ Part_ptr setSourceXAnnulus::sample(){
 
 	auto group = groupSample(groupProbability);
 
-    //direction sampling	
-    //QUESTION?? Is this any random angle?
 	double mu = 2 * rng->Urand() - 1;
 	double phi = 2 * pi*rng->Urand();
 	double omegaX=mu;
@@ -119,8 +117,8 @@ Part_ptr setSourceXAnnulus::sample(){
 		{
 			y = 2*rng->Urand()*radOuter;
 			z = 2*rng->Urand()*radOuter;
-			double dist = sqrt(y*y+z*z);
-			if(dist < radOuter)
+			double dist = (y*y+z*z);
+			if(dist < radOuter*radOuter)
 				reject = false;
 		}
 	}
@@ -165,8 +163,8 @@ Part_ptr setSourceYAnnulus::sample(){
 		{
 			x = 2*rng->Urand()*radOuter;
 			z = 2*rng->Urand()*radOuter;
-			double dist = sqrt(x*x+z*z);
-			if(dist < radOuter)
+			double dist = (x*x+z*z);
+			if(dist < radOuter*radOuter)
 				reject = false;
 		}
 	}
@@ -212,8 +210,8 @@ Part_ptr setSourceZAnnulus::sample(){
 		{
 			x = 2*rng->Urand()*radOuter;
 			y = 2*rng->Urand()*radOuter;
-			double dist = sqrt(x*x+y*y);
-			if(dist < radOuter)
+			double dist = (x*x+y*y);
+			if(dist < radOuter*radOuter)
 				reject = false;
 		}
 	}
