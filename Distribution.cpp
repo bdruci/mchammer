@@ -2,17 +2,23 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
 
-//Changed from the original code
-// 1. rejection sampling [using (2*Urand()-1) ]
-// 2. rejection sampling [ considering radInner in sphere ]
-// 3. all sampling [ adding origin to point before returning ]
+double uniformContinuous::sample() {
 
+	double width = end - start;
 
-point randomDirection::sample() {
+	double inbetween = (Urand() * width) + start;
+
+	return inbetween;
+}
+
+point isotropicDirection::sample() {
 	double pi = acos(-1.);
-
-	double mu = 2 * Urand() - 1;
+	double rand = Urand();
+	double mu = (2 * rand) - 1;
+	std::cout << " mu is: " << mu << std::endl;
+	std::cout << " rand is: " << rand << std::endl;
 	double phi = 2 * pi*Urand();
 	double omegaX=mu;
 	double omegaY=sin(acos(mu))*cos(phi);
@@ -20,6 +26,18 @@ point randomDirection::sample() {
 	point dir = point(omegaX,omegaY,omegaZ);
 
 	return dir;
+}
+
+point cuboidGeometry::sample() {
+
+	double x, y, z;
+	x = (Urand()-0.5)*xaxis;
+	y = (Urand()-0.5)*yaxis;
+	z = (Urand()-0.5)*zaxis;
+
+	point pos(x + x0, y + y0, z + z0);
+
+	return pos;
 }
 
 point sphericalGeometry::sample() {
@@ -34,14 +52,14 @@ point sphericalGeometry::sample() {
 		x = (2*Urand()-1)*radOuter;
 		y = (2*Urand()-1)*radOuter;
 		z = (2*Urand()-1)*radOuter;
-		double dist = sqrt(x*x+y*y+z*z);
-		if(dist < radOuter && dist > radInner)
+		double dist = (x*x+y*y+z*z);
+		if(dist < radOuter*radOuter && dist > radInner*radInner)
 			reject = false;
 	}
 
 	point pos(x + x0, y + y0, z + z0);
-	return pos;
 
+	return pos;
 }
 
 point xAnnularGeometry::sample() {
@@ -76,6 +94,7 @@ point xAnnularGeometry::sample() {
 	//switched to adding the origin
 	point pos = point(x + x0, y + y0, z + z0);
 
+	return pos;
 }
 
 point yAnnularGeometry::sample() {
@@ -104,6 +123,7 @@ point yAnnularGeometry::sample() {
 	//switched to adding the origin
 	point pos = point(x + x0, y + y0, z + z0);
 
+	return pos;
 }
 
 point zAnnularGeometry::sample() {
@@ -132,4 +152,5 @@ point zAnnularGeometry::sample() {
 	//switched to adding the origin
 	point pos = point(x + x0, y + y0, z + z0);
 
+	return pos;
 }

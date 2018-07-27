@@ -6,8 +6,8 @@
 #include "Particle.h"
 #include "Distribution.h"
 
-randomDirection dirSampleClass;
-Distribution * randDir = &dirSampleClass;
+isotropicDirection dirSampleClass;
+Distribution<point> * randDir = &dirSampleClass;
 
 unsigned int Source::groupSample(std::vector<double> groupProbability)
 {

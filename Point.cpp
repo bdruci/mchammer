@@ -17,6 +17,18 @@ double point::operator * (point const &pt) {
   return( x * pt.x + y * pt.y + z * pt.z );
 }
 
+bool point::operator == (point const &pt) {
+  if (x == pt.x && y == pt.y && z ==pt.z)
+    return true;
+  return false;
+}
+
+bool point::operator != (point const &pt) {
+  if (*this == pt)
+    return false;
+  return true;
+}
+
 point point::operator / (double scalar) {
   point p(x / scalar  , y / scalar , z / scalar);
   return(p);
@@ -34,5 +46,3 @@ ray::ray( point p, point d ) : pos(p), dir(d) {
     dir.x *= norm; dir.y *= norm; dir.z *= norm;
     
 }
-
-
