@@ -39,6 +39,11 @@ point point::operator * (double scalar) {
   return(p);
 }
 
+point point::operator + (double scalar) {
+  point p(scalar + x , scalar + y, scalar + z);
+  return(p);
+}
+
 ray::ray( point p, point d ) : pos(p), dir(d) {
     
     // normalize direciton vector

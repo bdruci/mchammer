@@ -129,6 +129,7 @@ void    activateTesting( std::vector< double > inputVec ) {
     // MCNP random number generator
     loopThrough = inputVec;
     testingMode = true;
+    testIndex = 0;
     return;
 }
 
@@ -136,12 +137,12 @@ void    activateTesting( std::vector< double > inputVec ) {
 //
 REAL    Urand( void ) {
     if ( testingMode == true ) {
-        RN_SEED = loopThrough.at(testIndex);
+        double toReturn = loopThrough.at(testIndex);
         testIndex += 1;
         if ( testIndex == loopThrough.size() ) {
             testIndex = 0;
         }
-        return (REAL) (RN_SEED);
+        return toReturn;
     }
     // MCNP random number generator
     RN_SEED   = (RN_MULT*RN_SEED) & RN_MASK;

@@ -17,6 +17,7 @@ public:
     
     point operator / (double scalar);   // divide point elementwise by scalar
     point operator * (double scalar);   // multiply point elementwise by scalar
+    point operator + (double scalar); // add to point elementwise by scalar
 };
 
 

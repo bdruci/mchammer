@@ -141,6 +141,29 @@ bool Utility::FloatZero(double a){
   return fabs(a) < (500 * std::numeric_limits<double>::epsilon());
 }
 
+//Applies Float fxns to point
+bool Utility::PointEqual(point lhs, point rhs, double tolerance) {
+  bool equalx = true;
+  bool equaly = true;
+  bool equalz = true;
+
+  equalx = FloatEqual(lhs.x, rhs.x, tolerance);
+  equaly = FloatEqual(lhs.y, rhs.y, tolerance);
+  equalz = FloatEqual(lhs.z, rhs.z, tolerance);
+
+  if(rhs.x == 0){
+    equalx = FloatZero(lhs.x);
+  }
+  if(rhs.y == 0){
+    equaly = FloatZero(lhs.y);
+  }
+  if(rhs.z == 0){
+    equalz = FloatZero(lhs.z);
+  }
+
+  return (equalx && equaly && equalz);
+}
+
 /* ****************************************************************************************************** * 
  * Generic Vector and Point Operations
  *

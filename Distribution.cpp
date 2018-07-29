@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+static const double pi = acos(-1.0);
+
 double uniformContinuous::sample() {
 
 	double width = end - start;
@@ -13,16 +15,29 @@ double uniformContinuous::sample() {
 	return inbetween;
 }
 
+double exponentialContinuous::sample() {
+
+	double inbetween = (-log(Urand())/lambda) + start;
+
+	return inbetween;
+}
+
+double normalContinuous::sample() {
+
+	//Box-Muller method
+	double norm = sqrt(-2*log(Urand())) * cos(2*pi*Urand()) + start;
+
+	return norm;
+}
+
 point isotropicDirection::sample() {
-	double pi = acos(-1.);
-	double rand = Urand();
-	double mu = (2 * rand) - 1;
-	std::cout << " mu is: " << mu << std::endl;
-	std::cout << " rand is: " << rand << std::endl;
+
+	double mu = 2 * Urand() - 1;
+
 	double phi = 2 * pi*Urand();
-	double omegaX=mu;
-	double omegaY=sin(acos(mu))*cos(phi);
-	double omegaZ=sin(acos(mu))*sin(phi);
+	double omegaX=mu; 
+	double omegaY=sqrt(1-mu*mu)*cos(phi); //sin(acos(mu)) 
+	double omegaZ=sqrt(1-mu*mu)*sin(phi);
 	point dir = point(omegaX,omegaY,omegaZ);
 
 	return dir;
@@ -46,15 +61,36 @@ point sphericalGeometry::sample() {
 	double x;
 	double y;
 	double z;
-	bool reject = true;
-	while(reject)
+	if( radInner !=0 )
 	{
-		x = (2*Urand()-1)*radOuter;
-		y = (2*Urand()-1)*radOuter;
-		z = (2*Urand()-1)*radOuter;
-		double dist = (x*x+y*y+z*z);
-		if(dist < radOuter*radOuter && dist > radInner*radInner)
-			reject = false;
+		double thickness = (radOuter - radInner) * Urand();
+		point origin(x0,y0,z0);
+		isotropicDirection unitRand;
+
+		point unitPoint = unitRand.sample();
+		//Scale the random point to the thickness of the shell
+		unitPoint = unitPoint * thickness;
+		//Add the inner rad so point is inside of shell
+		unitPoint = unitPoint + radInner;
+		//Add the origin to place the point in the correct 3-d  space
+		unitPoint = unitPoint + origin;
+
+		return unitPoint;
+	}
+	else
+	{
+		bool reject = true;
+		while(reject)
+		{
+			x = (2*Urand()-1)*radOuter;
+			y = (2*Urand()-1)*radOuter;
+			z = (2*Urand()-1)*radOuter;
+			double dist = (x*x+y*y+z*z);
+			if(dist < radOuter*radOuter && dist > radInner*radInner)
+			{
+				reject = false;
+			}
+		}
 	}
 
 	point pos(x + x0, y + y0, z + z0);
@@ -67,8 +103,6 @@ point xAnnularGeometry::sample() {
 	//very similar in some systems - if the radii are close and large it may take a very long
 	//time to actually guess a point in the box on the annulus
 	//However - if a cylinder is passed I do switch to rejection
-
-	double pi = acos(-1.);
 
 	double x, y, z;
 
@@ -99,8 +133,6 @@ point xAnnularGeometry::sample() {
 
 point yAnnularGeometry::sample() {
 
-	double pi = acos(-1.);
-
 	double x, y, z;
 	y = height*Urand();
 	if(radInner != 0){
@@ -128,8 +160,6 @@ point yAnnularGeometry::sample() {
 
 point zAnnularGeometry::sample() {
 
-	double pi = acos(-1.);
-
 	double x,y,z;
 	z = height*Urand();
 	if(radInner != 0){
@@ -154,3 +184,5 @@ point zAnnularGeometry::sample() {
 
 	return pos;
 }
+
+

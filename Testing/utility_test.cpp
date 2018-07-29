@@ -3,8 +3,8 @@
 #include <vector>
 #include <iostream>
 
-#include "Catch.h"
-#include "Utility.h"
+#include "../Catch.h"
+#include "../Utility.h"
 
 
 TEST_CASE( "Utility", "[utility]" ) {

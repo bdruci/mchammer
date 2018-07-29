@@ -2,9 +2,9 @@
 
 #include <limits>
 
-#include "Catch.h"
-#include "Surface.h"
-#include "Random.h"
+#include "../Catch.h"
+#include "../Surface.h"
+#include "../Random.h"
 
 
 TEST_CASE( "Plane", "[plane]" ) {

@@ -8,11 +8,10 @@
 
 using namespace std;
 
-//TODO: Add shell functionality to sphere
-//Get better sense of isotropicDir
-//implement catagorical, exponential, normal
-//Make better tests / fix current tests
-template <typename T> 
+//TODO: Make better tests 
+//Is the current return for norm okay?
+
+template <class T> 
 class Distribution {
 
 private:
@@ -24,7 +23,7 @@ public:
 	Distribution( string name_in ) : name(name_in) {};
 	~Distribution() {};
 
-	string getName() { return name; };
+	virtual string getName() final { return name; };
 
 	virtual T sample() = 0;
 
@@ -39,8 +38,40 @@ private:
 
 public:
 
-	uniformContinuous( double s_in, double e_in ) : start(s_in), end(e_in), Distribution<double>("Uniform") { assert( start < end ); };
+	uniformContinuous( double s_in, double e_in ) : start(s_in), end(e_in), 
+					   Distribution<double>("Uniform") { assert( start < end ); };
 	~uniformContinuous() {};
+
+	double sample();
+};
+
+class exponentialContinuous : public Distribution<double> {
+
+private:
+
+  	double start, lambda;
+
+public:
+  
+  	exponentialContinuous( double s_in, double l_in ) : start(s_in), lambda(l_in), 
+					       Distribution<double>("Exponential") {};
+	~exponentialContinuous() {};
+
+	double sample();
+};
+
+//Uses the box-muller method to return an unbounded random point normally distributed 
+//around the start point
+class normalContinuous : public Distribution<double> {
+
+private: 
+
+	double start;
+
+public:
+  
+  	normalContinuous( double s_in ) : start(s_in), Distribution<double>("Normal") {};
+	~normalContinuous() {};
 
 	double sample();
 };
@@ -153,19 +184,43 @@ public:
 };
 
 //Returns a random element on the list of elements passed
-template <typename X> 
-class catagoricalDistribution : public Distribution<X> {
+template <typename X>
+class catagoricalWeighted : public Distribution<X> {
 
 private:
 
 	vector<X> elements;
+	vector<double> probabilities;
 
 public:
 
-	catagoricalDistribution( vector<X> elements_in ) : Distribution<X>("catagorical"), elements(elements_in) {};
-	~catagoricalDistribution() {};
+	catagoricalWeighted( vector<X> elements_in, vector<double> probs_in ) 
+						   : Distribution<X>("catagorical"), elements(elements_in) {
 
-	X sample();
+		double totalProb = 0;
+		for(int j = 0; j < probs_in.size(); ++j){
+			totalProb += probs_in.at(j);
+		}
+		for(int i = 0; i < probs_in.size(); ++i) {
+			probabilities.push_back(probs_in.at(i)/totalProb);
+		}
+		assert(probabilities.size() == elements.size());
+	};
+	~catagoricalWeighted() {};
+
+	X sample() {
+
+		double stopPoint = Urand();
+		double place = 0;
+		for(int i = 0; i < elements.size(); ++i){
+			place += probabilities.at(i);
+			if(place > stopPoint){
+				return elements.at(i);
+			}
+		}
+		assert(false); //should never get this far
+		return elements.at(0);
+	};
 };
 
 #endif
