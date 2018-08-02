@@ -60,18 +60,18 @@ public:
 	double sample();
 };
 
-//Uses the box-muller method to return an unbounded random point normally distributed 
-//around the start point
-class normalContinuous : public Distribution<double> {
+//Returns a normally distributed point with the mean and standard deviation passed 
+class gaussian : public Distribution<double> {
 
 private: 
 
-	double start;
+	double mu, sigma;
 
 public:
   
-  	normalContinuous( double s_in ) : start(s_in), Distribution<double>("Normal") {};
-	~normalContinuous() {};
+  	gaussian( double mu_in, double sig_in ) : mu(mu_in), sigma(sig_in),
+  	                Distribution<double>("Normal") {};
+	~gaussian() {};
 
 	double sample();
 };

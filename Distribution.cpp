@@ -22,10 +22,13 @@ double exponentialContinuous::sample() {
 	return inbetween;
 }
 
-double normalContinuous::sample() {
+double gaussian::sample() {
 
-	//Box-Muller method
-	double norm = sqrt(-2*log(Urand())) * cos(2*pi*Urand()) + start;
+	//Box-Muller method to get standard normally distributed point N(0,1)
+	double norm = sqrt(-2*log(Urand())) * cos(2*pi*Urand());
+
+	//Shift point using the location-scale property of standard normal fxns
+	norm = norm*sigma + mu;
 
 	return norm;
 }
@@ -86,7 +89,7 @@ point sphericalGeometry::sample() {
 			y = (2*Urand()-1)*radOuter;
 			z = (2*Urand()-1)*radOuter;
 			double dist = (x*x+y*y+z*z);
-			if(dist < radOuter*radOuter && dist > radInner*radInner)
+			if(dist < radOuter*radOuter)
 			{
 				reject = false;
 			}
@@ -120,8 +123,8 @@ point xAnnularGeometry::sample() {
 		{
 			y = (2*Urand()-1)*radOuter;
 			z = (2*Urand()-1)*radOuter;
-			double dist = sqrt(y*y+z*z);
-			if(dist < radOuter)
+			double dist = (y*y+z*z);
+			if(dist < radOuter*radOuter)
 				reject = false;
 		}
 	}
@@ -147,8 +150,8 @@ point yAnnularGeometry::sample() {
 		{
 			x = (2*Urand()-1)*radOuter;
 			z = (2*Urand()-1)*radOuter;
-			double dist = sqrt(x*x+z*z);
-			if(dist < radOuter)
+			double dist = (x*x+z*z);
+			if(dist < radOuter*radOuter)
 				reject = false;
 		}
 	}
@@ -174,8 +177,8 @@ point zAnnularGeometry::sample() {
 		{
 			x = (2*Urand()-1)*radOuter; 
 			y = (2*Urand()-1)*radOuter;
-			double dist = sqrt(x*x+y*y);
-			if(dist < radOuter)
+			double dist = (x*x+y*y);
+			if(dist < radOuter*radOuter)
 				reject = false;
 		}
 	}
