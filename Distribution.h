@@ -3,6 +3,9 @@
 
 #include <string>
 #include <cassert>
+#include <iostream>
+
+#include "Utility.h"
 #include "Random.h"
 #include "Point.h"
 
@@ -201,26 +204,50 @@ public:
 		for(int j = 0; j < probs_in.size(); ++j){
 			totalProb += probs_in.at(j);
 		}
+		double probCounter = 0;
 		for(int i = 0; i < probs_in.size(); ++i) {
-			probabilities.push_back(probs_in.at(i)/totalProb);
+			probCounter += probs_in.at(i)/totalProb;
+			probabilities.push_back(probCounter);
 		}
 		assert(probabilities.size() == elements.size());
+		if(!Utility::FloatEqual(probabilities.back(), 1.0, .001))
+		{
+			std::cout << "Improper probability vector passed - cumulative probability < 1 (tolerance .001)" << std::endl;
+			assert(false);
+		}
+		probabilities.back() = 1; //Assuming properly passed probabilities this will save rounding errors
+		
 	};
 	~catagoricalWeighted() {};
 
 	X sample() {
 
 		double stopPoint = Urand();
-		double place = 0;
 		for(int i = 0; i < elements.size(); ++i){
-			place += probabilities.at(i);
-			if(place > stopPoint){
+			if(probabilities.at(i) > stopPoint){
 				return elements.at(i);
 			}
 		}
 		assert(false); //should never get this far
 		return elements.at(0);
-	};
+	}
+};
+
+//Echos back passed element
+template <typename X>
+class delta : public Distribution<X> {
+private:
+
+	X echo;
+
+public:
+
+	delta( X echo_in ) : Distribution<X>("delta"), echo(echo_in) {};
+	~delta() {};
+
+	X sample() {
+		return echo;
+	}
 };
 
 #endif

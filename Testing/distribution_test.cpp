@@ -208,6 +208,20 @@ TEST_CASE( "Catagorical", "[distribution]" ) {
     }
 }
 
+TEST_CASE( "Delta", "[distribution]" ) {
+    // test sample for this derived type
+    SECTION ( " sample " ) {
+
+      delta<char> charEcho( 'a' );
+      REQUIRE( charEcho.sample() == 'a' );
+      REQUIRE( charEcho.sample() == 'a' );
+
+      delta<double> doubleEcho( 1.6 );
+      REQUIRE( doubleEcho.sample() == 1.6 );
+      REQUIRE( doubleEcho.sample() == 1.6 );
+    }
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*

@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-static const double pi = acos(-1.0);
+const double pi = acos(-1.0);
 
 double uniformContinuous::sample() {
 
