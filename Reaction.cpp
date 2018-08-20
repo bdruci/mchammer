@@ -74,7 +74,18 @@ void  Fission::sample( Part_ptr p, std::stack< Part_ptr > &bank ) {
   double y0 = p->getPos().y;
   double z0 = p->getPos().z;
 
-  Source_ptr source = std::make_shared< setSourcePoint > ( "induced_fission", x0, y0, z0, chi );
+  point pos(x0,y0,z0);
+
+  std::vector<unsigned int> groups;
+  for(unsigned int i = 0; i < chi.size(); ++i)
+  {
+    groups.push_back(i+1);
+  }
+  catagoricalWeighted<unsigned int> groupDist(groups, chi);
+  isotropicDirection dir;
+  delta<point> echoPos(pos);
+
+  Source_ptr source = std::make_shared< Source > ( "induced_fission", &groupDist, &dir, &echoPos );
 
   if ( n <= 0 ) 
   {

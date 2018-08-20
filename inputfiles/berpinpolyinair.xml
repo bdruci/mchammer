@@ -93,5 +93,5 @@
 </estimators>
 
 <sources>
-  <setSourceSphere name="berpsource" distribution="hardcoded" xSource="0.0" ySource="0.0" zSource="0.0" radInner="0.0" radOuter="3.79349"/>
+  <sphere name="berpsource" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="0.0" ySource="0.0" zSource="0.0" radInner="0.0" radOuter="3.79349"/>
 </sources>

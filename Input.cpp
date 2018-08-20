@@ -558,159 +558,148 @@ void Input::readInput( std::string xmlFilename ) {
   // iterate over sources
   pugi::xml_node input_sources = input_file.child("sources");
   for ( auto so : input_sources ) {
-    std::string type  = so.name();
+    std::string type  = so.name(); //simple shape setSourceSphere -> sphere
     std::string name  = so.attribute("name").value();
 
     std::shared_ptr< Source > sourc;
 
-    if ( type == "setSourceSphere" ) {
+    Distribution<unsigned int> * groupDist_ptr;
+    Distribution<point> * dirDist_ptr;
+    Distribution<point> * posDist_ptr;
+
+    //Construct group distribution
+    std::string group_distribution = so.attribute("group_distribution").value();
+    if ( group_distribution == "hardcoded" ) {
+        // all neutrons come from the first group
+        delta<unsigned int> echo(1);
+        groupDist_ptr = &echo;
+    }
+    else 
+    {
+        std::cout << " unknown group_distribution type with name " << group_distribution << std::endl;
+        throw;
+    }
+
+    //Construct direction distribution
+    std::string dir_distribution = so.attribute("direction_distribution").value();
+    if( dir_distribution == "isotropic" ) {
+      isotropicDirection isoDir;
+      dirDist_ptr = &isoDir;
+    }
+    else 
+    {
+        std::cout << " unknown direction_distribution type with name " << dir_distribution << std::endl;      
+        throw;
+    }
+
+    //Construct position distrbution
+    if ( type == "sphere" ) {
       double x0   = so.attribute("xSource").as_double();
       double y0   = so.attribute("ySource").as_double();
       double z0   = so.attribute("zSource").as_double();
       double radi = so.attribute("radInner").as_double();
       double rado = so.attribute("radOuter").as_double();
-      std::string dist = so.attribute("distribution").value();
-
-      if ( dist == "hardcoded" ) {
-        // all neutrons come from the first group
-        std::vector< double > sourceGroups;
-        sourceGroups.push_back( 1.0 );
-        for ( int i=1; i<nGroups; i++ ) {
-          sourceGroups.push_back( 0.0 );
-        }
-        sourc = std::make_shared< setSourceSphere > ( name, x0, y0, z0, radi, rado, sourceGroups );
-      }
-      else {
-        std::cout << " unknown distribution type with name " << dist << std::endl;
-        throw;
-      }
+      sphericalGeometry sphereGeo(x0,y0,z0,radi,rado);
+      posDist_ptr = &sphereGeo;
     }
-    else if ( type == "setSourcePoint" ) {
+    else if ( type == "point" ) 
+    {
       double x0   = so.attribute("xSource").as_double();
       double y0   = so.attribute("ySource").as_double();
       double z0   = so.attribute("zSource").as_double();
-      std::string dist = so.attribute("distribution").value();
+      point origin(x0,y0,z0);
+      delta<point> posDist(origin) ;
+      posDist_ptr = &posDist;
 
-      if ( dist == "hardcoded" ) {
-        // all neutrons come from the first group
-        std::vector< double > sourceGroups;
-        sourceGroups.push_back( 1.0 );
-        for ( int i=1; i<nGroups; i++ ) {
-          sourceGroups.push_back( 0.0 );
-        }
-        sourc = std::make_shared< setSourcePoint > ( name, x0, y0, z0, sourceGroups );
-      }
-      else {
-        std::cout << " unknown distribution type with name " << dist << std::endl;
-        throw;
-      }
     }
-        else if( type == "setSourceAnnulus" ) {
-      pugi::xml_attribute X0   = so.attribute("xSource");
-      pugi::xml_attribute Y0   = so.attribute("ySource");
-      pugi::xml_attribute Z0   = so.attribute("zSource");
-      pugi::xml_attribute Height = so.attribute("height");
-      pugi::xml_attribute Axis = so.attribute("axis");
-      pugi::xml_attribute Radi = so.attribute("radInner");
-      pugi::xml_attribute Rado = so.attribute("radOuter");
-      std::string dist = so.attribute("distribution").value();
+    else if( type == "annulus" ) 
+    {
+      pugi::xml_attribute x0   = so.attribute("xSource");
+      pugi::xml_attribute y0   = so.attribute("ySource");
+      pugi::xml_attribute z0   = so.attribute("zSource");
+      pugi::xml_attribute height = so.attribute("height");
+      pugi::xml_attribute axis = so.attribute("axis");
+      pugi::xml_attribute radi = so.attribute("radInner");
+      pugi::xml_attribute rado = so.attribute("radOuter");
 
       //Check attributes passed
-      if(!X0 || !Y0 || !Z0 || !Height || !Axis || !Radi || !Rado || Radi.as_double() < 0
-         || Rado.as_double() < 0 || Radi.as_double() > Rado.as_double() || Height.as_double() < 0) {
+      if(!x0 || !y0 || !z0 || !height || !axis || !radi || !rado || radi.as_double() < 0
+         || rado.as_double() <= 0 || radi.as_double() > rado.as_double() || height.as_double() < 0) {
         std::cout << " source setSourceCylinder " << name << " initialized incorrectly" << std::endl;
         throw;
       }
 
-      double x0   = X0.as_double();
-      double y0   = Y0.as_double();
-      double z0   = Z0.as_double();
-      double height = Height.as_double();
-      std::string axis = Axis.value();
-      double radi = Radi.as_double();
-      double rado = Rado.as_double();
+      double X   = so.attribute("xSource").as_double();
+      double Y   = so.attribute("ySource").as_double();
+      double Z   = so.attribute("zSource").as_double();
+      double H = so.attribute("height").as_double();
+      double Ri = so.attribute("radInner").as_double();
+      double Ro = so.attribute("radOuter").as_double();
+      std::string A = so.attribute("axis").value();
 
-      if ( dist == "hardcoded" ) {
-        // all neutrons come from the first group
-        std::vector< double > sourceGroups;
-        sourceGroups.push_back( 1.0 );
-        for ( int i=1; i<nGroups; i++ ) {
-          sourceGroups.push_back( 0.0 );
-        }
-        if(axis == "x" || axis == "X"){
-          sourc = std::make_shared< setSourceXAnnulus > ( name, x0, y0, z0, height, radi, rado, sourceGroups );
-        }
-        else if(axis == "y" || axis == "Y"){
-          sourc = std::make_shared< setSourceYAnnulus > ( name, x0, y0, z0, height, radi, rado, sourceGroups );
-        }
-        else if(axis == "z" || axis == "Z"){
-          sourc = std::make_shared< setSourceZAnnulus > ( name, x0, y0, z0, height, radi, rado, sourceGroups );
-        }
-        else{
-          std::cout << " unknown axis type with name " << axis << std::endl;
-          throw;
-        }
-        
+      if(A == "x" || A == "X"){
+        xAnnularGeometry ann( X, Y, Z, H, Ri, Ro );
+        posDist_ptr = &ann;
       }
-      else {
-        std::cout << " unknown distribution type with name " << dist << std::endl;
+      else if(A == "y" || A == "Y"){
+        xAnnularGeometry ann( X, Y, Z, H, Ri, Ro );
+        posDist_ptr = &ann;
+      }
+      else if(A == "z" || A == "Z"){
+        xAnnularGeometry ann( X, Y, Z, H, Ri, Ro );
+        posDist_ptr = &ann;
+      }        
+      else{
+        std::cout << " unknown axis type with name " << axis << std::endl;
         throw;
       }
+
     }
-    else if( type == "setSourceCylinder" ) {
-      pugi::xml_attribute X0   = so.attribute("xSource");
-      pugi::xml_attribute Y0   = so.attribute("ySource");
-      pugi::xml_attribute Z0   = so.attribute("zSource");
-      pugi::xml_attribute Height = so.attribute("height");
-      pugi::xml_attribute Axis = so.attribute("axis");
-      pugi::xml_attribute Rad = so.attribute("radius");
-      std::string dist = so.attribute("distribution").value();
+    else if( type == "cylinder" ) 
+    {
+      pugi::xml_attribute x0   = so.attribute("xSource");
+      pugi::xml_attribute y0   = so.attribute("ySource");
+      pugi::xml_attribute z0   = so.attribute("zSource");
+      pugi::xml_attribute height = so.attribute("height");
+      pugi::xml_attribute axis = so.attribute("axis");
+      pugi::xml_attribute rad = so.attribute("radius");
 
       //Check attributes passed
-      if(!X0 || !Y0 || !Z0 || !Height || !Axis || !Rad || Rad.as_double() < 0 || Height.as_double() < 0){
+      if(!x0 || !y0 || !z0 || !height || !axis|| !rad || rad.as_double() <= 0 || height.as_double() <= 0) {
         std::cout << " source setSourceCylinder " << name << " initialized incorrectly" << std::endl;
         throw;
       }
 
-      double x0   = so.attribute("xSource").as_double();
-      double y0   = so.attribute("ySource").as_double();
-      double z0   = so.attribute("zSource").as_double();
-      double height = so.attribute("height").as_double();
-      std::string axis = so.attribute("axis").value();
-      double rad = so.attribute("radius").as_double();
+      double X   = so.attribute("xSource").as_double();
+      double Y   = so.attribute("ySource").as_double();
+      double Z   = so.attribute("zSource").as_double();
+      double H = so.attribute("height").as_double();
+      double R = so.attribute("radius").as_double();
+      std::string A = so.attribute("axis").value();
 
-      if ( dist == "hardcoded" ) {
-        // all neutrons come from the first group
-        std::vector< double > sourceGroups;
-        sourceGroups.push_back( 1.0 );
-        for ( int i=1; i<nGroups; i++ ) {
-          sourceGroups.push_back( 0.0 );
-        }
-        if(axis == "x" || axis == "X"){
-          sourc = std::make_shared< setSourceXAnnulus > ( name, x0, y0, z0, height, 0, rad, sourceGroups );
-        }
-        else if(axis == "y" || axis == "Y"){
-          sourc = std::make_shared< setSourceYAnnulus > ( name, x0, y0, z0, height, 0, rad, sourceGroups );
-        }
-        else if(axis == "z" || axis == "Z"){
-          sourc = std::make_shared< setSourceZAnnulus > ( name, x0, y0, z0, height, 0, rad, sourceGroups );
-        }
-        else{
-          std::cout << " unknown axis type with name " << axis << std::endl;
-          throw;
-        }
-        
+      if(A == "x" || A == "X"){
+        xAnnularGeometry cyl( X, Y, Z, H, R );
+        posDist_ptr = &cyl;
       }
-      else {
-        std::cout << " unknown distribution type with name " << dist << std::endl;
+      else if(A == "y" || A == "Y"){
+        xAnnularGeometry cyl( X, Y, Z, H, R );
+        posDist_ptr = &cyl;
+      }
+      else if(A == "z" || A == "Z"){
+        xAnnularGeometry cyl( X, Y, Z, H, R );
+        posDist_ptr = &cyl;
+      }        
+      else{
+        std::cout << " unknown axis type with name " << axis << std::endl;
         throw;
       }
-    }
 
+    }
     else {
       std::cout << " unnknown source type with name " << type << std::endl;
       throw;
-    }
+    } 
+    sourc = std::make_shared< Source > ( name, groupDist_ptr, dirDist_ptr, posDist_ptr  );
     geometry->setSource( sourc );
   }
   constants->lock(); // Please don't move this
