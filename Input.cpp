@@ -563,18 +563,17 @@ void Input::readInput( std::string xmlFilename ) {
 
     std::shared_ptr< Source > sourc;
 
-    Distribution<unsigned int> * groupDist_ptr;
-    Distribution<point> * dirDist_ptr;
-    Distribution<point> * posDist_ptr;
+    std::shared_ptr< Distribution<unsigned int> > groupDist_ptr;
+    std::shared_ptr< Distribution<point> > dirDist_ptr;
+    std::shared_ptr< Distribution<point> > posDist_ptr;
 
     //Construct group distribution
     std::string group_distribution = so.attribute("group_distribution").value();
     if ( group_distribution == "hardcoded" ) {
         // all neutrons come from the first group
-        delta<unsigned int> echo(1);
-        groupDist_ptr = &echo;
+        groupDist_ptr = std::make_shared< delta<unsigned int> > (1);
     }
-    else 
+    else  
     {
         std::cout << " unknown group_distribution type with name " << group_distribution << std::endl;
         throw;
@@ -583,8 +582,7 @@ void Input::readInput( std::string xmlFilename ) {
     //Construct direction distribution
     std::string dir_distribution = so.attribute("direction_distribution").value();
     if( dir_distribution == "isotropic" ) {
-      isotropicDirection isoDir;
-      dirDist_ptr = &isoDir;
+      dirDist_ptr = std::make_shared< isotropicDirection > ( );
     }
     else 
     {
@@ -599,8 +597,7 @@ void Input::readInput( std::string xmlFilename ) {
       double z0   = so.attribute("zSource").as_double();
       double radi = so.attribute("radInner").as_double();
       double rado = so.attribute("radOuter").as_double();
-      sphericalGeometry sphereGeo(x0,y0,z0,radi,rado);
-      posDist_ptr = &sphereGeo;
+      posDist_ptr = std::make_shared< sphericalGeometry >( x0, y0, z0, radi, rado );
     }
     else if ( type == "point" ) 
     {
@@ -608,8 +605,7 @@ void Input::readInput( std::string xmlFilename ) {
       double y0   = so.attribute("ySource").as_double();
       double z0   = so.attribute("zSource").as_double();
       point origin(x0,y0,z0);
-      delta<point> posDist(origin) ;
-      posDist_ptr = &posDist;
+      posDist = std::make_shared< delta<point> > (pos);
 
     }
     else if( type == "annulus" ) 
@@ -638,16 +634,13 @@ void Input::readInput( std::string xmlFilename ) {
       std::string A = so.attribute("axis").value();
 
       if(A == "x" || A == "X"){
-        xAnnularGeometry ann( X, Y, Z, H, Ri, Ro );
-        posDist_ptr = &ann;
+        posDist_ptr = std::make_shared< xAnnularGeometry > ( X, Y, Z, H, Ri, Ro );
       }
       else if(A == "y" || A == "Y"){
-        xAnnularGeometry ann( X, Y, Z, H, Ri, Ro );
-        posDist_ptr = &ann;
+        posDist_ptr = std::make_shared< yAnnularGeometry > ( X, Y, Z, H, Ri, Ro );
       }
       else if(A == "z" || A == "Z"){
-        xAnnularGeometry ann( X, Y, Z, H, Ri, Ro );
-        posDist_ptr = &ann;
+        posDist_ptr = std::make_shared< zAnnularGeometry > ( X, Y, Z, H, Ri, Ro );
       }        
       else{
         std::cout << " unknown axis type with name " << axis << std::endl;
@@ -678,16 +671,13 @@ void Input::readInput( std::string xmlFilename ) {
       std::string A = so.attribute("axis").value();
 
       if(A == "x" || A == "X"){
-        xAnnularGeometry cyl( X, Y, Z, H, R );
-        posDist_ptr = &cyl;
+        posDist_ptr = std::make_shared< xAnnularGeometry > ( X, Y, Z, H, R );
       }
       else if(A == "y" || A == "Y"){
-        xAnnularGeometry cyl( X, Y, Z, H, R );
-        posDist_ptr = &cyl;
+        posDist_ptr = std::make_shared< yAnnularGeometry > ( X, Y, Z, H, R );
       }
       else if(A == "z" || A == "Z"){
-        xAnnularGeometry cyl( X, Y, Z, H, R );
-        posDist_ptr = &cyl;
+        posDist_ptr = std::make_shared< zAnnularGeometry > ( X, Y, Z, H, R );
       }        
       else{
         std::cout << " unknown axis type with name " << axis << std::endl;

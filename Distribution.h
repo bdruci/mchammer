@@ -101,7 +101,7 @@ class isotropicDirection : public Distribution<point> {
 
 public:
 
-  isotropicDirection() : Distribution<point>("Direction") {};
+  isotropicDirection() : Distribution<point>("Isotropic") {};
   ~isotropicDirection() {};
 
   //Returns random direction unit vector

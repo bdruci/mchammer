@@ -5,6 +5,9 @@
 
 #include "Reaction.h"
 
+typedef std::shared_ptr< Distribution<unsigned int> > intDist_ptr;
+typedef std::shared_ptr< Distribution<point> > pointDist_ptr;
+
 double Capture::getXS( Part_ptr p )
 {
   int g = p->getGroup();
@@ -81,11 +84,11 @@ void  Fission::sample( Part_ptr p, std::stack< Part_ptr > &bank ) {
   {
     groups.push_back(i+1);
   }
-  catagoricalWeighted<unsigned int> groupDist(groups, chi);
-  isotropicDirection dir;
-  delta<point> echoPos(pos);
+  intDist_ptr groupDist = std::make_shared< catagoricalWeighted<unsigned int> > (groups, chi);
+  pointDist_ptr dir = std::make_shared< isotropicDirection > ( );
+  pointDist_ptr echoPos = std::make_shared< delta<point> > ( pos );
 
-  Source_ptr source = std::make_shared< Source > ( "induced_fission", &groupDist, &dir, &echoPos );
+  Source_ptr source = std::make_shared< Source > ( "induced_fission", groupDist, dir, echoPos );
 
   if ( n <= 0 ) 
   {
