@@ -573,6 +573,27 @@ void Input::readInput( std::string xmlFilename ) {
         // all neutrons come from the first group
         groupDist_ptr = std::make_shared< delta<unsigned int> > (1);
     }
+    else if ( group_distribution == "passed" ) 
+    {
+      //Assumes chi is passed by user
+      pugi::xml_attribute chi = so.attribute("chi");
+      if (chi) 
+      {
+        double tempProb = 0;
+        vector<double> groupProbs;
+        vector<unsigned int> groupList;
+        std::istringstream inString( chi.value() );
+
+        while ( inString >> tempProb ) { groupProbs.push_back( tempProb ); }
+        for (int i = 0; i < nGroups; ++i) { groupList.push_back(i+1); }
+
+        groupDist_ptr = std::make_shared< catagoricalWeighted<unsigned int> > ( groupList, groupProbs );
+      }
+      else
+      {
+        std::cout << "No chi attribute passed with group_distribution of passed" << std::endl;
+      }
+    }
     else  
     {
         std::cout << " unknown group_distribution type with name " << group_distribution << std::endl;
@@ -605,7 +626,7 @@ void Input::readInput( std::string xmlFilename ) {
       double y0   = so.attribute("ySource").as_double();
       double z0   = so.attribute("zSource").as_double();
       point origin(x0,y0,z0);
-      posDist = std::make_shared< delta<point> > (pos);
+      posDist_ptr = std::make_shared< delta<point> > (origin);
 
     }
     else if( type == "annulus" ) 
