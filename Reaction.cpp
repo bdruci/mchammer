@@ -72,13 +72,14 @@ void  Fission::sample( Part_ptr p, std::stack< Part_ptr > &bank ) {
   // push all but one of them into the bank, and set working particle to the last one
   // if no secondaries, kill the particle
   int     g = p->getGroup();
-  int     n = floor( nu[g-1] + Urand() );
+  int     n = floor( nu[g-1] + Urand() ); // Distribution maybe?
   double x0 = p->getPos().x;
   double y0 = p->getPos().y;
   double z0 = p->getPos().z;
 
   point pos(x0,y0,z0);
 
+  //Construct the source
   std::vector<unsigned int> groups;
   for(unsigned int i = 0; i < chi.size(); ++i)
   {
@@ -90,6 +91,7 @@ void  Fission::sample( Part_ptr p, std::stack< Part_ptr > &bank ) {
 
   Source_ptr source = std::make_shared< Source > ( "induced_fission", groupDist, dir, echoPos );
 
+  //Sample the source
   if ( n <= 0 ) 
   {
     p->kill();

@@ -1,0 +1,97 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<!-- This is how a comment is written in xml -->
+
+<!-- Setup Parameters -->
+<setup nhistories="10" ngroups="2" xsfile="berpinpolyinair.xs" meshfile="berpinpolyinair.thrm" loud="false"/>
+<outfiles outfile="ignore.out" vtkfile="ignore.vtu" timefile="ignore.out"/>
+
+<nuclides>
+  <nuclide name="berpball_homo"> 
+    <Capture>
+      <xs value="3.667E-04 2.2431901E-02"/>
+    </Capture>
+    <Scatter> <!-- xs vectors are arranged by incident energy, ( g->1, g->2, ..., g->G ) -->
+      <xs incident_group="1" value="3.26855E-01 1.37999E-05"/>
+      <xs incident_group="2" value="3.16534E-03 9.02867E-01"/>
+    </Scatter>
+    <Fission>
+      <xs value="8.64299E-02 3.32690E-01"/>
+      <nu value="3.18911E+00 2.89500E+00"/>
+      <chi value="1.0 0.0"/>
+    </Fission>
+  </nuclide>
+  <nuclide name="polyball_homo">
+    <Capture>
+      <xs value="1.59983001E-02 1.096257766E+01"/>
+    </Capture>
+    <Scatter> <!-- xs vectors are arranged by incident energy, ( g->1, g->2, ..., g->G ) -->
+      <xs incident_group="1" value="9.87386E-01 5.16173E-02"/>
+      <xs incident_group="2" value="1.38099E-04 2.46461E+00"/>
+    </Scatter>
+  </nuclide>
+  <nuclide name="air_homo">
+    <Capture>
+      <xs value="5.86724E-06 5.75445902E-05"/>
+    </Capture>
+    <Scatter> <!-- xs vectors are arranged by incident energy, ( g->1, g->2, ..., g->G ) -->
+      <xs incident_group="1" value="1.93542E-04 1.38576E-06"/>
+      <xs incident_group="2" value="6.84098E-08 4.41404E-04"/>
+    </Scatter>
+  </nuclide>
+</nuclides>
+
+<materials>
+  <material name="berpball" density="1.0">
+    <nuclide name="berpball_homo" frac="1.0"/>
+  </material>
+  <material name="polyball" density="1.0">
+    <nuclide name="polyball_homo" frac="1.0"/>
+  </material>
+  <material name="air" density="1.0">
+    <nuclide name="air_homo" frac="1.0"/>
+  </material>
+</materials>
+
+<surfaces>
+  <sphere name="sphere1" x0="0.0" y0="0.0" z0="0.0" rad="3.79349"/>
+  <sphere name="sphere2" x0="0.0" y0="0.0" z0="0.0" rad="11.41349"/>
+  <plane name="xplane1" a="1.0" b="0.0" c="0.0" d="-101.6"/>
+  <plane name="xplane2" a="1.0" b="0.0" c="0.0" d="101.6"/>
+  <plane name="yplane1" a="0.0" b="1.0" c="0.0" d="-101.6"/>
+  <plane name="yplane2" a="0.0" b="1.0" c="0.0" d="101.6"/>
+  <plane name="zplane1" a="0.0" b="0.0" c="1.0" d="-101.6"/>
+  <plane name="zplane2" a="0.0" b="0.0" c="1.0" d="101.6"/>
+</surfaces>
+
+<cells>
+  <cell name="berpball" material="berpball">
+    <surface name="sphere1" sense="-1"/>
+  </cell>
+  <cell name="polyball" material="polyball">
+    <surface name="sphere1" sense="+1"/>
+    <surface name="sphere2" sense="-1"/>
+  </cell>
+  <cell name="air" material="air">
+    <surface name="sphere2" sense="+1"/>
+    <surface name="xplane1" sense="+1"/>
+    <surface name="xplane2" sense="-1"/>
+    <surface name="yplane1" sense="+1"/>
+    <surface name="yplane2" sense="-1"/>
+    <surface name="zplane1" sense="+1"/>
+    <surface name="zplane2" sense="-1"/>
+  </cell>
+</cells>
+
+<estimators> <!-- Right now we can only read in CollisionTally estimators, will add more as needed -->
+  <CollisionTally name="uncollidedFlux" apply="cell" applyName="all_cells"/>
+  <CollisionTally name="uncollidedFlux" apply="tet" applyName="all_tets"/>
+  <!-- ************* These examples are in-progress **************************** -->
+  <!-- <CollisionTally name="uncollidedFlux" apply="cell" applyName="berpball"/> -->
+  <!-- <CollisionTally name="uncollidedFlux" apply="tet" applyName="tet1"/>      -->
+  <!-- ************************************************************************* -->
+</estimators>
+
+<sources>
+  <sphere name="berpsource" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="0.0" ySource="0.0" zSource="0.0" radInner="0.0" radOuter="3.79349"/>
+</sources>

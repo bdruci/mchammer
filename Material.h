@@ -47,6 +47,7 @@ class Material
     std::string name()           { return materialName; };
     double      getAtomDensity() { return atomDensity;  };
     double      getMacroXS( Part_ptr p );
+    std::vector< std::pair< Nuclide_ptr, double > > getAllNuclides() { return nuclides; };
 
     // Functions
     Nuclide_ptr sampleNuclide   ( Part_ptr p                          );
