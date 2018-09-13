@@ -32,11 +32,12 @@ pair<Surf_ptr, double> Cell::closestSurface(Part_ptr p)
 	double min_val = std::numeric_limits<double>::max();
 	point pos = p->getPos();
 	point dir = p->getDir();
+  double dist;
 	for(auto bound: surfacePairs)
 	{
 		Surf_ptr cur_surf =  bound.first;
-		double dist = cur_surf->distance(pos,dir);
-		if(dist < min_val && dist >  0)
+		dist = cur_surf->distance(pos,dir);
+		if(dist < min_val && dist >= 0)
 		{
 			min_surf = cur_surf;
 			min_val  = dist;
