@@ -8,7 +8,9 @@ pwd     = $(shell pwd)
 main    = Main.cpp
 objects = $(patsubst %.cpp,%.o,$(filter-out $(main), $(wildcard *.cpp)))
 
-.PHONY : all test clean
+.PHONY : all test clean notest
+
+notest :	$(objects) $(exec) 
 
 all :	$(objects) $(exec) test
 
