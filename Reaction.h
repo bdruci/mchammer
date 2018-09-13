@@ -16,8 +16,7 @@
 #include "Particle.h"
 #include "Source.h"
 
-typedef std::shared_ptr< Particle > Part_ptr;
-typedef std::shared_ptr< Source >   Source_ptr;
+typedef std::shared_ptr< Source > Source_ptr;
 
 class Reaction 
 // Need to add safety features

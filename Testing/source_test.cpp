@@ -8,6 +8,7 @@
 
 typedef std::shared_ptr<Particle> Part_ptr;
 typedef std::shared_ptr<Source> Source_ptr;
+typedef std::shared_ptr<SingleSource> SSource_ptr;
 typedef std::shared_ptr< Distribution<unsigned int> > intDist_ptr;
 typedef std::shared_ptr< Distribution<point> > pointDist_ptr;
 
@@ -21,7 +22,7 @@ TEST_CASE( "Source", "[source]" ) {
   point pos(0,0,0);
   pointDist_ptr posDist = std::make_shared< delta<point> > ( pos );
 
-  Source_ptr src = std::make_shared< Source >( "Tester", groupsDist, dirDist, posDist );
+  Source_ptr src = std::make_shared< SingleSource >( "Tester", groupsDist, dirDist, posDist );
 
   SECTION("Sample test") {
     unsigned int correctGroup = 1;
@@ -34,6 +35,14 @@ TEST_CASE( "Source", "[source]" ) {
     REQUIRE(returned->getGroup() == correctGroup);
     REQUIRE(Utility::PointEqual(returned->getDir(), correctDir, .001));
     REQUIRE(returned->getPos() == correctPos);
+  }
+
+  SECTION("MasterSource Compile Test") {
+    Source_ptr ssrc = std::make_shared< SingleSource > ("VecTesters", groupsDist, dirDist, posDist);
+    std::vector< Source_ptr > srcs = { ssrc, ssrc, ssrc };
+    std::vector<double> probs = { .5, .25, .25 };
+    Source_ptr mSrc = std::make_shared< MasterSource > ( srcs, probs );
+    Part_ptr t = mSrc->sample();
   }
 
 }

@@ -89,7 +89,7 @@ void  Fission::sample( Part_ptr p, std::stack< Part_ptr > &bank ) {
   pointDist_ptr dir = std::make_shared< isotropicDirection > ( );
   pointDist_ptr echoPos = std::make_shared< delta<point> > ( pos );
 
-  Source_ptr source = std::make_shared< Source > ( "induced_fission", groupDist, dir, echoPos );
+  Source_ptr source = std::make_shared< SingleSource > ( "induced_fission", groupDist, dir, echoPos );
 
   //Sample the source
   if ( n <= 0 ) 

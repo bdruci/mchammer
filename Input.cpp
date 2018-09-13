@@ -564,7 +564,7 @@ void Input::readInput( std::string xmlFilename ) {
   // iterate over sources
   pugi::xml_node input_sources = input_file.child("sources");
   //If the user passes multiple sources collect all of them and their probs
-  std::vector< std::pair< std::shared_ptr< Source >, double> > sources;
+  std::pair< std::vector< std::shared_ptr< Source > >, std::vector<double> > sources;
   for ( auto so : input_sources ) {
     std::string type  = so.name(); //simple shape setSourceSphere -> sphere
     std::string name  = so.attribute("name").value();
@@ -718,18 +718,23 @@ void Input::readInput( std::string xmlFilename ) {
       std::cout << " unnknown source type with name " << type << std::endl;
       throw;
     } 
-    sourc = std::make_shared< Source > ( name, groupDist_ptr, dirDist_ptr, posDist_ptr  );
+    sourc = std::make_shared< SingleSource > ( name, groupDist_ptr, dirDist_ptr, posDist_ptr  );
 
     //Check if there are multiple sources
     pugi::xml_attribute sourceProb = so.attribute("source_probability");
     if( sourceProb ) {
       double sProb = sourceProb.as_double();
-      std::pair< std::shared_ptr< Source >, double > tempPair= { sourc, sProb };
-      sources.push_back( tempPair );
+      sources.first.push_back( sourc );
+      sources.second.push_back( sProb );
     }
     else{
       geometry->setSource( sourc );
     }  
+  }
+  if( sources.second.size() > 1 ) 
+  {
+    std::shared_ptr< Source > sourc = std::make_shared< MasterSource > ( sources.first, sources.second );
+    geometry->setSource(sourc);
   }
   constants->lock(); // Please don't move this
 }
