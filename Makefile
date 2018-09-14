@@ -10,9 +10,9 @@ objects = $(patsubst %.cpp,%.o,$(filter-out $(main), $(wildcard *.cpp)))
 
 .PHONY : all test clean notest
 
-notest :	$(objects) $(exec) 
-
 all :	$(objects) $(exec) test
+
+notest :	$(objects) $(exec) 
 
 test :
 	@ cd $(testdir) && $(MAKE)
