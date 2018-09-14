@@ -48,7 +48,7 @@ TEST_CASE( "Plane", "[plane]" ) {
     SECTION ( " random points near plane " ) {
       bool rand_test_result = true;
       for ( unsigned i = 0 ; i < 1000 ; i++ ) {
-        point  p( 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0 );
+        point  p( 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0 );
         double eval_result = a*p.x + b*p.y + c*p.z - d;
         rand_test_result = rand_test_result && ( thePlane.eval(p) == eval_result );
       }

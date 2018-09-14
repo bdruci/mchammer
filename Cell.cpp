@@ -8,7 +8,7 @@
 double Cell::distToCollision(Part_ptr pi)
 {
   double total_xs = mat->getMacroXS(pi);
-  double dist = -log(Urand())/total_xs;
+  double dist = -log( rng->Urand() )/total_xs;
   return dist;
 }
 

@@ -31,7 +31,7 @@ double Material::getMacroXS( Part_ptr p )
 // randomly sample a nuclide based on total cross sections and atomic fractions
 Nuclide_ptr Material::sampleNuclide( Part_ptr p ) 
 {
-  double u = getMicroXS( p ) * Urand();
+  double u = getMicroXS( p ) * rng->Urand();
   double s = 0.0;
 
   for ( auto n : nuclides ) 

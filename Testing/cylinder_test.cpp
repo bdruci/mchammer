@@ -51,19 +51,19 @@ TEST_CASE( "Cylinder", "[cylinder]" ) {
     SECTION ( " random points near cylinder " ) {
       bool rand_test_result = true;
       for ( unsigned i = 0 ; i < 1000 ; i++ ) {
-        point  p( 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0 );
+        point  p( 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0 );
         double eval_result = pow( p.y - y0, 2 ) + pow( p.z - z0, 2 ) - rad*rad;
         rand_test_result = rand_test_result && ( SimpleXCyl.eval(p) == eval_result );
       }
       REQUIRE( rand_test_result );
       for ( unsigned i = 0 ; i < 1000 ; i++ ) {
-        point  p( 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0 );
+        point  p( 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0 );
         double eval_result = pow( p.x - x0, 2 ) + pow( p.z - z0, 2 ) - rad*rad;
         rand_test_result = rand_test_result && ( SimpleYCyl.eval(p) == eval_result );
       }
       REQUIRE( rand_test_result );
       for ( unsigned i = 0 ; i < 1000 ; i++ ) {
-        point  p( 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0, 20.0 * Urand() - 10.0 );
+        point  p( 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0, 20.0 * rng->Urand() - 10.0 );
         double eval_result = pow( p.x - x0, 2 ) + pow( p.y - y0, 2 ) - rad*rad;
         rand_test_result = rand_test_result && ( SimpleZCyl.eval(p) == eval_result );
       }
