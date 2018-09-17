@@ -22,11 +22,13 @@ public:
   ~Source() {}; 
 
   std::string getName() { return sourceName; };
-  virtual std::string groupDistType() =0;
-  virtual std::string dirDistType() =0;
-  virtual std::string posDistType() =0;
+  virtual std::string groupDistType() { assert(false); };
+  virtual std::string dirDistType() { assert(false); };
+  virtual std::string posDistType() { assert(false); };
+  virtual std::vector< std::string > getSources() { assert(false); };
 
   virtual Part_ptr sample() = 0;
+
 };
 
 //First derive class - holds a single source and returns a part_ptr sampled from it
@@ -44,9 +46,9 @@ public:
          Source(label) {};
   ~SingleSource() {};
 
-  std::string groupDistType() { return groupDist->getName(); };
-  std::string dirDistType() { return dirDist->getName(); };
-  std::string posDistType() { return posDist->getName(); };
+  std::string groupDistType() override { return groupDist->getName(); };
+  std::string dirDistType() override { return dirDist->getName(); };
+  std::string posDistType() override { return posDist->getName(); };
 
   Part_ptr sample() {
     unsigned int group = groupDist->sample();
@@ -64,19 +66,21 @@ typedef std::shared_ptr< Distribution< src_ptr > > srcDist_ptr;
 class MasterSource : public Source {
 private:
   srcDist_ptr srcDist;
+  std::vector< std::string > srcNames;
 public:
   MasterSource( std::vector<src_ptr> srcs_in, std::vector<double> srcProbs_in ) : Source("Master") {
     srcDist = std::make_shared< catagoricalWeighted< src_ptr > > ( srcs_in, srcProbs_in );
+    for (int i = 0; i < srcs_in.size(); ++i)
+    {
+      srcNames.push_back(srcs_in.at(i)->getName());
+    }
   }
   ~MasterSource() {};
-
-  std::string groupDistType() { assert(false); };
-  std::string dirDistType() { assert(false); };
-  std::string posDistType() { assert(false); };
 
   Part_ptr sample() {
     return srcDist->sample()->sample();
   }
+  std::vector< std::string > getSources() override { return srcNames;};
 };
 
 #endif

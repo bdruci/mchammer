@@ -18,13 +18,15 @@ TEST_CASE( "Source", "[source]" ) {
   vector<unsigned int> groups = { 1, 2, 3 };
   vector<double> groupProbs = { 1, 1, 1 };
   intDist_ptr groupsDist = std::make_shared< catagoricalWeighted<unsigned int> > (groups, groupProbs);
+  intDist_ptr MSgroup = std::make_shared< delta<unsigned int> > ( 20 );
   pointDist_ptr dirDist = std::make_shared< isotropicDirection> ( );
   point pos(0,0,0);
   pointDist_ptr posDist = std::make_shared< delta<point> > ( pos );
 
+
   Source_ptr src = std::make_shared< SingleSource >( "Tester", groupsDist, dirDist, posDist );
 
-  SECTION("Sample test") {
+  SECTION("Single Source Sample test") {
     unsigned int correctGroup = 1;
     point correctDir( 0, 0, 1 );
     point correctPos (0, 0, 0 );
@@ -37,12 +39,21 @@ TEST_CASE( "Source", "[source]" ) {
     REQUIRE(returned->getPos() == correctPos);
   }
 
-  SECTION("MasterSource Compile Test") {
+  SECTION("Master Source sample test") {
     Source_ptr ssrc = std::make_shared< SingleSource > ("VecTesters", groupsDist, dirDist, posDist);
-    std::vector< Source_ptr > srcs = { ssrc, ssrc, ssrc };
+    Source_ptr SSRC = std::make_shared< SingleSource > ("Real", MSgroup, dirDist, posDist);
+    std::vector< Source_ptr > srcs = { ssrc, ssrc, SSRC };
     std::vector<double> probs = { .5, .25, .25 };
     Source_ptr mSrc = std::make_shared< MasterSource > ( srcs, probs );
-    Part_ptr t = mSrc->sample();
-  }
 
+    vector<double> testNums = { 0.9, 0.2, 0.5, 0.25 };
+    activateTesting( testNums );
+
+    Part_ptr t = mSrc->sample();
+    std::vector< std::string > srcN = mSrc->getSources();
+    REQUIRE(srcN.at(0) == "VecTesters");
+    REQUIRE(srcN.at(1) == "VecTesters");
+    REQUIRE(srcN.at(2) == "Real");
+    REQUIRE(t->getGroup() == 20);
+  }
 }

@@ -236,6 +236,7 @@ public:
   ~zAnnularGeometry() {};
 
   point sample();
+
 };
 
 
@@ -283,7 +284,6 @@ public:
 
   //Returns an elements with weighted probability
   X sample() {
-
     double stopPoint = Urand();
     for(int i = 0; i < elements.size(); ++i)
     {

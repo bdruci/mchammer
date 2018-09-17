@@ -6,16 +6,7 @@
 #include <utility>
 #include <iostream>
 
-//Geometry needs to hold a vector of sources + some mechanism to pick a source to sample 
-//each history -- a class ~ catagoricalWeighted
-
-//Does a distribution make more sense in fission::sample() rather that the floor + Urand?
-
-//Materials werent being communicated to geometry
-
 //FloatEqual for surface evals
-//Normal vector for surfaces is negative?
-
 
 typedef std::shared_ptr< Estimator >         Estimator_ptr;
 typedef std::shared_ptr<EstimatorCollection> EstCol_ptr;
@@ -165,21 +156,16 @@ TEST_CASE( "Compile test", "[Input]" ) {
 	//TODO add test for estimators - in file w/ all the esimators written
 	
 	//Test sources
-	Source_ptr src = geometry->getSource();
-	REQUIRE( src->getName() == "berpsource" );
-	REQUIRE( src->groupDistType() == "delta" );
-	REQUIRE( src->dirDistType() == "Isotropic" );
-	REQUIRE( src->posDistType() == "Sphere" );
 
-	std::vector<double> testNums3 = { .5, .25, .25 };
-	activateTesting(testNums3);
-	Part_ptr sampledPart = src->sample();
-	point correctDir(0,0,1);
-	point correctPos(-1.896745,0,-1.896745);
+	Source_ptr MasterS = geometry->getSource();
+	std::vector< std::string > srcsNames = MasterS->getSources();
 
-	REQUIRE( sampledPart->getGroup() == 1 );
-	REQUIRE( Utility::PointEqual(sampledPart->getDir(), correctDir, .001) );
-	REQUIRE( Utility::PointEqual( sampledPart->getPos(), correctPos, .001) );
+	REQUIRE( srcsNames.at(0) == "sphereSource" );
+	REQUIRE( srcsNames.at(1) == "pointSource" );
+	REQUIRE( srcsNames.at(2) == "cuboidSource" );
+	REQUIRE( srcsNames.at(3) == "annulSource" );
+	REQUIRE( srcsNames.at(4) == "cylSource" );
 	}
+
 
 }

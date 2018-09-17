@@ -93,5 +93,9 @@
 </estimators>
 
 <sources>
-  <sphere name="berpsource" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="0.0" ySource="0.0" zSource="0.0" radInner="0.0" radOuter="3.79349"/>
+  <sphere name="sphereSource" source_probability="1" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="0.0" ySource="0.0" zSource="0.0" radInner="0.0" radOuter="3.79349"/>
+  <point name="pointSource" source_probability="1" group_distribution="passed" group_probabilities= "0 1" direction_distribution = "isotropic" xSource="6.0" ySource="6.0" zSource="6.0"/>
+  <cuboid name="cuboidSource" source_probability="1" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="0.0" ySource="-100.0" zSource="0.0" xLength="1.0" zLength="3.79349" yLength="1.0"/>
+  <annulus name="annulSource" source_probability="1" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="0.0" ySource="-100.0" zSource="0.0" height="10" radInner="1.0" radOuter="3.79349" axis="z"/>
+  <cylinder name="cylSource" source_probability="1" group_distribution="hardcoded" direction_distribution = "isotropic" xSource="-100.0" ySource="0.0" zSource="0.0" height="10" radius="125.0" axis="y"/>
 </sources>

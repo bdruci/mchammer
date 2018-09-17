@@ -599,7 +599,7 @@ void Input::readInput( std::string xmlFilename ) {
       }
       else
       {
-        std::cout << "No chi attribute passed with group_distribution of passed" << std::endl;
+        std::cout << "No attribute passed with group_distribution of passed" << std::endl;
       }
     }
     else  
@@ -635,6 +635,17 @@ void Input::readInput( std::string xmlFilename ) {
       double z0   = so.attribute("zSource").as_double();
       point origin(x0,y0,z0);
       posDist_ptr = std::make_shared< delta<point> > (origin);
+
+    }
+    else if ( type == "cuboid" )
+    {
+      double x0   = so.attribute("xSource").as_double();
+      double y0   = so.attribute("ySource").as_double();
+      double z0   = so.attribute("zSource").as_double();
+      double xA   = so.attribute("xLength").as_double();
+      double yA   = so.attribute("yLength").as_double();
+      double zA   = so.attribute("zLength").as_double();
+      posDist_ptr = std::make_shared< cuboidGeometry >( x0, y0, z0, xA, yA, zA );
 
     }
     else if( type == "annulus" ) 
@@ -688,7 +699,7 @@ void Input::readInput( std::string xmlFilename ) {
 
       //Check attributes passed
       if(!x0 || !y0 || !z0 || !height || !axis|| !rad || rad.as_double() <= 0 || height.as_double() <= 0) {
-        std::cout << " source setSourceCylinder " << name << " initialized incorrectly" << std::endl;
+        std::cout << " source cylinder " << name << " initialized incorrectly" << std::endl;
         throw;
       }
 
