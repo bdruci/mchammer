@@ -71,21 +71,24 @@ void Transport::runTransport()
                 }
                 else //hit surface
                 {
-
+                    // prepare the SurfaceCrossingHandler
+                    // set the surface to be crossed given particle position & direction
+                    surfaceCrossingHandler.setSurfaceCrossed( current_Cell->getClosestSurface( p ) );
+                    // set the cell the particle will be leaving
+                    surfaceCrossingHandler.setCellLeft(current_Cell);                 
+                
                     // keep track of initial position and move particle
                     point oldPos = p->getPos();
-                    p->move(d2s + 0.00000001);
+                    p->move(d2s + 0.0000001);
                     
-                    // handle estimators
-                    timer->startTimer("handling estimators at surface crossing");
-                    surfaceCrossingHandler.setSurfaceCrossed( current_Cell->getClosestSurface( p ) );
-                    surfaceCrossingHandler.setCellLeft(current_Cell);
-                    surfaceCrossingHandler.score( std::make_shared<point>(oldPos) , p );  
-                    timer->endTimer("handling estimators at surface crossing");
-                    
-                    // update cell
+                    // find the new cell the particle is in
                     Cell_ptr newCell = geometry->whereAmI(p->getPos());
-
+                    
+                    // score any relevant estimators at the surface crossing
+                    timer->startTimer("scoring estimators at surface crossing");
+                    surfaceCrossingHandler.score( std::make_shared<point>(oldPos) , p );  
+                    timer->endTimer("scoring estimators at surface crossing");
+                    
                 if(newCell == nullptr)
                 {
                     p->kill();
