@@ -79,13 +79,13 @@ public:
   double Urand() override;
 
   //Init in this case just resets the index
-  void RN_init_particle( unsigned long long nps ) { testIndex = 0; };
+  void RN_init_particle( unsigned long long nps ) override { testIndex = 0; };
 
   //Shouldn't be called
-  ULONG RN_skip_ahead( ULONG* seed, LONG* nskip ) { assert(false); };
+  ULONG RN_skip_ahead( ULONG* seed, LONG* nskip ) override { assert(false); };
 
   //Shouldn't be called
-  bool RN_test_basic( void ) { assert(false); };
+  bool RN_test_basic( void ) override { assert(false); };
 };
 
 //Construct instance of Rand class so only one has Urand called on it
