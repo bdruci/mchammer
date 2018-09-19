@@ -66,11 +66,11 @@ TEST_CASE("CollisionHandler" , "[EventHandler]" ) {
 
 
   // create an estimator collection of the collison type
-  EstimatorCollection cole( attributeMap , EstimatorCollection::EstimatorType::Collision , 10);
+  EstimatorCollection cole( "test1" , attributeMap , EstimatorCollection::EstimatorType::Collision , 10);
   cole.setGeometricDivisor(1.0);
   
   // and the track length type
-  EstimatorCollection tracke( attributeMap , EstimatorCollection::EstimatorType::TrackLength , 10);
+  EstimatorCollection tracke( "test2" , attributeMap , EstimatorCollection::EstimatorType::TrackLength , 10);
   tracke.setGeometricDivisor(1.0);
 
   // give the tet a collision estimator collection
