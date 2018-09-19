@@ -45,7 +45,7 @@ TEST_CASE( "group binning structure", "[EstimatorCollection]" ) {
 
   // create an estimator collection of the collison type
   // the number of source particles is constant at 4, no mater how many times endHist is called
-  EstimatorCollection e( attributeMap , EstimatorCollection::EstimatorType::Collision , 4);
+  EstimatorCollection e( "test1" , attributeMap , EstimatorCollection::EstimatorType::Collision , 4);
   e.setGeometricDivisor(1.0);
 
   SECTION( "Type test ") {
@@ -57,7 +57,7 @@ TEST_CASE( "group binning structure", "[EstimatorCollection]" ) {
   Particle particle(pt , dir , 4);
   std::shared_ptr<Particle> p = std::make_shared<Particle>(particle);
   
-  vector<int> ig4 {3};
+  vector<unsigned int> ig4 {3};
   
   // no scoring
   SECTION( "flux test ") {
@@ -102,7 +102,7 @@ TEST_CASE( "group binning structure", "[EstimatorCollection]" ) {
     REQUIRE( e.checkUncertainty(ig4) == 1 );
   }
   
-  vector<int> ig5 {4};
+  vector<unsigned int> ig5 {4};
 
   // check to make sure new group is correct
   SECTION( "flux test w/ variance") {
@@ -128,7 +128,7 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" )   
 
   // create an estimator collection of the collison type
   // with 10 source particles
-  EstimatorCollection e( attributeMap , EstimatorCollection::EstimatorType::Collision , 10);
+  EstimatorCollection e( "test2" , attributeMap , EstimatorCollection::EstimatorType::Collision , 10);
   e.setGeometricDivisor(1.0);
 
   SECTION( "test size ") {
@@ -145,7 +145,7 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" )   
   e.score(p , 1.0);
   e.endHist();
 
-  vector<int> g4_nc0 {3, 0};
+  vector<unsigned int> g4_nc0 {3, 0};
 
 
   SECTION( "flux test, multibinning, g4 nc 0") {
@@ -160,7 +160,7 @@ TEST_CASE( "group and collision binning structure", "[EstimatorCollection]" )   
   p->countCollision();
   p->countCollision();
 
-  vector<int> g4_nc2 {3, 2};
+  vector<unsigned int> g4_nc2 {3, 2};
  
   // score 4x, over 2 histories, in group 4, ncol = 2
   e.score(p , 1.0);
@@ -205,7 +205,7 @@ TEST_CASE("run like a simulated 2 speed transport" , "[EstimatorCollection]" ) {
 
   // create an estimator collection of the collison type
   // with 100 source particles
-  EstimatorCollection e( attributeMap , EstimatorCollection::EstimatorType::Collision , numSource);
+  EstimatorCollection e( "test3" , attributeMap , EstimatorCollection::EstimatorType::Collision , numSource);
   e.setGeometricDivisor(1.0);
 
   //manually set up a counter to keep track of the estimator scoring
@@ -280,11 +280,11 @@ TEST_CASE("run like a simulated 2 speed transport" , "[EstimatorCollection]" ) {
   } // end for loop through source queue
 
   
-  vector <int> indices {0,0};
+  vector <unsigned int> indices {0,0};
   SECTION("compare manual and EstimatorCollection scoring after simulated transport") {
-    for (int i = 0; i < numGroups; ++i) {
+    for (unsigned int i = 0; i < numGroups; ++i) {
       indices.at(0) = i;
-      for (int j = minCol; j <= maxCol; ++j) {
+      for (unsigned int j = minCol; j <= maxCol; ++j) {
         indices.at(1) = j - minCol;
         REQUIRE( e.checkEstimator(indices)   == manual.at(i).at(j - minCol)->getEstimate( numSource )     );
         REQUIRE( e.checkUncertainty(indices) == manual.at(i).at(j - minCol)->getUncertainty( numSource ) );

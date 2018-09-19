@@ -129,10 +129,6 @@ namespace Utility {
   // return largest positive root of quadratic equation with coefficients a, b, c
   // if both roots negative or complex, return a really big number
   double quadSolve( double a, double b, double c );
-  
-  // translates n-dimensional indices on an n-dimensional array to a scalar index on an unraveled array 
-  // holding the same values 
-  int linearizeIndices( std::vector<int> indices , std::vector<int> binSizes );
 
   //Effects: Checks to see if the two numbers passed are within a range of each other
   //the range is passed by the user as a percentage of larger number
@@ -141,5 +137,14 @@ namespace Utility {
   //Effects: checks to see if the float is appromixately zero
   bool FloatZero(double f);
 
+  /* ****************************************************************************************************** * 
+   * linearize indices
+   *
+   * ****************************************************************************************************** */ 
+  
+  // translates n-dimensional indices on an n-dimensional array to a scalar index on an unraveled array 
+  // holding the same values 
+  unsigned int linearizeIndices( std::vector<unsigned int> indices , std::vector<unsigned int> binSizes );
+ 
 };
 #endif

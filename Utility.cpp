@@ -113,7 +113,7 @@ double Utility::quadSolve( double a, double b, double c ) {
 //                                                  the unraveled array (5 being the length of the first dimension of the 2d
 //                                                  array, and the element being the 4th in the 2nd row -> 5 + 4 = 9, or 8
 //                                                  when indexed from 0.
-int Utility::linearizeIndices( std::vector<int> indices , std::vector<int> binSizes) {
+unsigned int Utility::linearizeIndices( std::vector<unsigned int> indices , std::vector<unsigned int> binSizes) {
   if(indices.size() != binSizes.size() ) {
     std::cerr << "Error in Utility::linearizeIndices! indices and binSizes must be the same size" << std::endl;
     throw std::runtime_error("DimensionMismatchError");
