@@ -23,7 +23,9 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
+#include <iomanip>      // std::setprecision
 #include <stdexcept>
+#include <fstream>
 
 #ifndef _BINNINGSTRUCTURE_H_
 #define _BINNINGSTRUCTURE_H_
@@ -67,7 +69,7 @@ template <typename attributeType> class BinningStructure {
     
     // given a value, finds the index in the binning structure 
     // the index of the first bin is 0, e.g. the bin from [min,min+binWidth)
-    // the index of the last bin is -1, e.g. the bin from [max - binWidth,max)
+    // a the index of the last bin is -1, e.g. the bin from [max - binWidth,max)
     int getIndex(attributeType value) 
     {
       int index;
@@ -75,16 +77,48 @@ template <typename attributeType> class BinningStructure {
         return( (int)   floor( size  * (value - min) / (max - min) ) );
       }
       else if (strict == false) {
-        // if not strict, an index of -1 tells the client the value is outside the binning structure
+        // if not strict, an index of -1 tells the client the value is outside 
+        // the binning structure
         return(-1);
       }
       else {
         // if strict, throw an error
         std::cerr << "Error un Utility::BinningStructure::getIndex" << std::endl;
-        std::cerr << "When BinningStructure::strict is true, a value outisde the binning structure results in a runtime error" << std::endl;
+        std::cerr << "When BinningStructure::strict is true, a value outisde the " 
+                  << "binning structure results in a runtime error" << std::endl;
         throw std::runtime_error("TypeError");
       }
     };
+
+    // prints the lower bin edge given an ofstream and the index
+    void printLowerEdge( unsigned int ind , std::ofstream &out ) 
+    {
+      out << std::setprecision(9) << min + binWidth * ind;
+    }
+
+    // prints data - e.g. estimator scores binned over the independent variables in 
+    // the binning structure, with the edges of each bin
+    void printTabularData( const std::vector< double > &data        ,  
+                           const std::vector< double > &uncertainty ,
+                           std::ofstream &out                        ) 
+    {
+      if ( data.size() != size or uncertainty.size() != size) {
+        std::cerr << "In BinningStructure<>::printTabularData(): " 
+                  << "data and uncertainty must match BinningStructure::size" 
+                  << std::endl;
+        throw std::runtime_error("OutOfRangeError");
+      }
+      else {
+        for( int i = 0; i < size - 1; ++i) {
+          out << std::setprecision(9) <<  min + binWidth * i << "  ,  " 
+              << std::setprecision(9) <<  std::scientific    << data[i]  
+                                                             << "  ,  " 
+              << std::setprecision(9) <<  std::scientific    << uncertainty[i] 
+              << std::endl;
+        }
+        out   << std::setprecision(9) << max << std::endl;
+      }
+    }
 };
 
 // validity check for integer binning structures

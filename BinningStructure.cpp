@@ -15,4 +15,3 @@ template<> void BinningStructure<int>::checkValidity()
     throw std::runtime_error("TypeError");
   }
 };
-
