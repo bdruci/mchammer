@@ -456,7 +456,7 @@ void Input::readInput( std::string xmlFilename ) {
     if ( type == "CollisionTally" ) {
       // create estimator collection
       // TODO set up geometric multipliers so the volume of a cell/group of cells/tet can be passed to the estimator collection
-      EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::Collision , nHist);
+      EstCol_ptr est = std::make_shared<EstimatorCollection>( name , attributeMap , EstimatorCollection::EstimatorType::Collision , nHist);
 
       // push the estimator collection back to the master list
       estimators.push_back(est); 
@@ -517,7 +517,7 @@ void Input::readInput( std::string xmlFilename ) {
       }
     }
     else if ( type == "SurfaceFluenceTally" ) {
-      EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence , nHist);
+      EstCol_ptr est = std::make_shared<EstimatorCollection>(name ,  attributeMap , EstimatorCollection::EstimatorType::SurfaceFluence , nHist);
       // push the estimator collection back to the master list
       estimators.push_back(est); 
 
@@ -546,7 +546,7 @@ void Input::readInput( std::string xmlFilename ) {
       }
     }
     else if ( type == "SurfaceCurrentTally" ) {
-      EstCol_ptr est = std::make_shared<EstimatorCollection>( attributeMap , EstimatorCollection::EstimatorType::SurfaceCurrent , nHist);
+      EstCol_ptr est = std::make_shared<EstimatorCollection>(name , attributeMap , EstimatorCollection::EstimatorType::SurfaceCurrent , nHist);
       // push the estimator collection back to the master list
       estimators.push_back(est); 
 
