@@ -74,6 +74,7 @@ public:
     
     // Estimator interface
     void endHist(); 
+    void printEstimators();
 };
 
 #endif

@@ -112,25 +112,20 @@ void Transport::runTransport()
 void Transport::output() {
     cout << std::endl << "Total Number of Histories: " << numHis << endl;
 
-    int i = 0;
-    /*
-    for( Cell_ptr cell : geometry->getCells() ) {
-        ++i;
-        std::cout << "Collision tally in cell " << i << std::endl;
-        for( int j = 1; j <= constants->getNumGroups(); ++j) {
-            std::cout << " group: " << j << ", tally = " << cell->getSingleGroupTally(j, numHis).first 
-                      << ", stddev = " << cell->getSingleGroupTally(j, numHis).second << std::endl;
-        }
-        cout << std::endl;
-    }
-    */
+    // write estimators to output file
+    printEstimators();
 
     // print timing information
     timer->printAvgResults();
 
-    // print mesh estimators to file
-    mesh->printMeshTallies();
+    // write mesh estimators to VTK output 
     if ( constants->getAllTets() ) {
         mesh->writeToVTK();
     }
+}
+
+void Transport::printEstimators() {
+  for( auto est : estimators ) {
+    est->printEstimators();
+  }
 }
