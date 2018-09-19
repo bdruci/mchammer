@@ -4,7 +4,7 @@
 
 <!-- Setup Parameters -->
 <setup nhistories="10" ngroups="2" xsfile="berpinpolyinair.xs" meshfile="berpinpolyinair.thrm" loud="true"/>
-<outfiles outfile="berpinpolyinair.out" vtkfile="berpinpolyinair.vtu" timefile="time.out"/>
+<outfiles outfile="berpinpolyinair.out" vtkfile="berpinpolyinair.vtu" timefile="time.out" />
 
 <nuclides>
   <nuclide name="berpball_homo"> 
@@ -84,8 +84,18 @@
 </cells>
 
 <estimators> <!-- Right now we can only read in CollisionTally estimators, will add more as needed -->
-  <CollisionTally name="uncollidedFlux" apply="cell" applyName="all_cells"/>
-  <CollisionTally name="uncollidedFlux" apply="tet" applyName="all_tets"/>
+  <!--                                                                                                      -->
+  <!--                    Estimators must have unique names                                                 -->
+  <!-- Estimator rules and features:                                                                        -->
+  <!-- apply: Estimators can be applies to "cell", "tet", "surface"                                         -->
+  <!--        If the apply field is blank, Estimators are applied to the full geometry                      -->
+  <!-- applyName: Name of cell/surface, number of tet or e.g. "all_cells", "all_tets", etc.                 -->
+  <!-- Attribute: Estimators can be binned over particle attributes, e.g. group, collision order, etc.      -->
+  <!--            Estimator will be scored and printed over attributes in the order they're specified       -->
+  <!--            Attributes are specifed as a child, e.g. <Attribute attr="group" min=1 max=8 binSize=1/>  -->
+  <!--                                                                                                      -->
+  <CollisionTally name="uncollidedCellFlux" apply="cell" applyName="all_cells"/>
+  <CollisionTally name="uncollidedTetFlux"  apply="tet"  applyName="all_tets"/>
   <!-- ************* These examples are in-progress **************************** -->
   <!-- <CollisionTally name="uncollidedFlux" apply="cell" applyName="berpball"/> -->
   <!-- <CollisionTally name="uncollidedFlux" apply="tet" applyName="tet1"/>      -->
