@@ -11,8 +11,6 @@ typedef std::shared_ptr<Particle> Part_ptr;
 typedef std::shared_ptr< Distribution<unsigned int> > intDist_ptr;
 typedef std::shared_ptr< Distribution<point> > pointDist_ptr;
 
-//REWRITE for master and norm sources
-
 //Parent class
 class Source {
 private:
@@ -31,7 +29,7 @@ public:
 
 };
 
-//First derive class - holds a single source and returns a part_ptr sampled from it
+//Normal case - holds a single source and returns a part_ptr sampled from it
 class SingleSource : public Source {
 private:
 
@@ -50,7 +48,7 @@ public:
   std::string dirDistType() override { return dirDist->getName(); };
   std::string posDistType() override { return posDist->getName(); };
 
-  Part_ptr sample() {
+  Part_ptr sample() override {
     unsigned int group = groupDist->sample();
     point dir = dirDist->sample();
     point pos = posDist->sample();
@@ -77,7 +75,7 @@ public:
   }
   ~MasterSource() {};
 
-  Part_ptr sample() {
+  Part_ptr sample() override {
     return srcDist->sample()->sample();
   }
   std::vector< std::string > getSources() override { return srcNames;};

@@ -39,7 +39,7 @@ point isotropicDirection::sample() {
 
   double phi = 2 * pi*Urand();
   double omegaX=mu; 
-  double omegaY=sqrt(1-mu*mu)*cos(phi); //sin(acos(mu)) 
+  double omegaY=sqrt(1-mu*mu)*cos(phi); //sin(acos(mu)) == sqrt(1-mu*mu)
   double omegaZ=sqrt(1-mu*mu)*sin(phi);
   point dir = point(omegaX,omegaY,omegaZ);
 
@@ -63,7 +63,7 @@ point sphericalGeometry::sample() {
   double x;
   double y;
   double z;
-  if( radInner !=0 )
+  if( radInner !=0 ) //Use equ to avoid too much guessing
   {
     double thickness = (radOuter - radInner) * Urand();
     point origin(x0,y0,z0);
@@ -101,7 +101,6 @@ point sphericalGeometry::sample() {
 }
 
 point xAnnularGeometry::sample() {
-
   double x, y, z;
 
   x = height*Urand();
@@ -125,7 +124,7 @@ point xAnnularGeometry::sample() {
         reject = false;
     }
   }
-  //switched to adding the origin
+
   point pos = point(x + x0, y + y0, z + z0);
 
   return pos;
@@ -154,7 +153,7 @@ point yAnnularGeometry::sample() {
         reject = false;
     }
   }
-  //switched to adding the origin
+
   point pos = point(x + x0, y + y0, z + z0);
 
   return pos;
@@ -183,7 +182,7 @@ point zAnnularGeometry::sample() {
         reject = false;
     }
   }
-  //switched to adding the origin
+
   point pos = point(x + x0, y + y0, z + z0);
 
   return pos;

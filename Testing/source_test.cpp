@@ -14,7 +14,6 @@ typedef std::shared_ptr< Distribution<point> > pointDist_ptr;
 
 TEST_CASE( "Source", "[source]" ) {
 
-
   vector<unsigned int> groups = { 1, 2, 3 };
   vector<double> groupProbs = { 1, 1, 1 };
   intDist_ptr groupsDist = std::make_shared< catagoricalWeighted<unsigned int> > (groups, groupProbs);
@@ -22,7 +21,6 @@ TEST_CASE( "Source", "[source]" ) {
   pointDist_ptr dirDist = std::make_shared< isotropicDirection> ( );
   point pos(0,0,0);
   pointDist_ptr posDist = std::make_shared< delta<point> > ( pos );
-
 
   Source_ptr src = std::make_shared< SingleSource >( "Tester", groupsDist, dirDist, posDist );
 
