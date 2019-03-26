@@ -1,3 +1,7 @@
+# DEPRECATED.
+
+This is no longer supported; the current version of mc-hammer is hosted in a private repo at the moment, but once it goes public it will be linked here so check back soon!
+
 # mc-hammer
 3D Monte Carlo neutron transport
 
